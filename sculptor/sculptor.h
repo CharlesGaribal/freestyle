@@ -11,7 +11,7 @@ class Sculptor
 public:
     Sculptor(const SculptorParameters &params);
 
-    void operator()(OpenMesh::VertexHandle vcenter, float radius);
+    void operator()(OpenMesh::VertexHandle vcenter, float radius, const Operator::AdditionnalParameters &opParams);
 
     void setMesh(QuasiUniformMesh *mesh) {
         if (params.valid())

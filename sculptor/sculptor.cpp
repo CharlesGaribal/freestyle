@@ -6,7 +6,7 @@ Sculptor::Sculptor(const SculptorParameters &params) :
     currentOp(-1)
 {}
 
-void Sculptor::operator()(OpenMesh::VertexHandle vcenter, float radius) {
+void Sculptor::operator()(OpenMesh::VertexHandle vcenter, float radius, const Operator::AdditionnalParameters &opParams) {
     if (!params.valid() || ops.empty())
         return;
 
@@ -15,7 +15,7 @@ void Sculptor::operator()(OpenMesh::VertexHandle vcenter, float radius) {
     buildField();
 
     Operator &op = ops[currentOp];
-    op();
+    op(opParams);
 
     QuasiUniformMeshConverter::convertRegion(qum, field, params.getMinEdgeLength(), params.getMaxEdgeLength());
 

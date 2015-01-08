@@ -7,11 +7,15 @@ class Sculptor;
 class Operator
 {
 public:
+    class AdditionnalParameters {
+
+    };
+
     enum ETopologicalChange {NONE, GENUS};
 
     Operator(Sculptor *sculptor);
 
-    virtual void operator()() = 0;
+    virtual void operator()(AdditionnalParameters params) = 0;
     virtual ETopologicalChange getTopologicalChange() = 0;
 
     void setSculptor(Sculptor *sculptor) {
