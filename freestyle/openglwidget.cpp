@@ -73,6 +73,8 @@ void OpenGLWidget::initializeGL() {
     resetCamera();
     renderer_->setCamera(camera_);
 
+    loadScene("../data/cubes_spheres.dae");
+
     glCheckError();
 }
 
@@ -171,6 +173,41 @@ void OpenGLWidget::mousePressEvent ( QMouseEvent * e ) {
         found = select(modelViewMatrix, projectionMatrix, e->pos().x(), height_ - e->pos().y(), selectionBuffer);
         if (found) {
             std::cerr << "materialId : " << selectionBuffer[0] << " -- meshId : " << selectionBuffer[1] << " -- faceId : " << selectionBuffer[2] << std::endl;
+
+            //Convert the mesh (test)
+            std::cout << "convert and makeUniform" <<std::endl;
+            vortex::Mesh *mesh_ = assetManager_->getMesh(selectionBuffer[1]);
+            Timer timer;
+            DefaultPolyMesh m;
+
+            timer.reset();
+            timer.start();
+            MeshConverter::convert(mesh_, &m);
+            mesh_->release();
+            timer.stop();
+
+            timer.reset();
+            timer.start();
+            QuasiUniformMesh qum = QuasiUniformMeshConverter::convert(&m);
+            timer.stop();
+
+            timer.reset();
+            timer.start();
+            QuasiUniformMeshConverter::makeUniform(&qum, 0.1, 0.2);
+            timer.stop();
+
+            timer.reset();
+            timer.start();
+            m = QuasiUniformMeshConverter::convertBackPoly(&qum);
+            timer.stop();
+
+            timer.reset();
+            timer.start();
+            MeshConverter::convert(&m, mesh_);
+            timer.stop();
+            std::cout << "convert polymesh -> vortexmesh " << timer.value() <<std::endl;
+            mesh_->init();
+            updateGL();
         }
     }
 

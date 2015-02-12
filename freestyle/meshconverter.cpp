@@ -26,7 +26,7 @@ void MeshConverter::convert(DefaultPolyMesh *in, vortex::Mesh *out){
 
     timer.start();
     //in->triangulate();
-    in->garbage_collection();
+    //in->garbage_collection();
     in->request_face_normals();
     in->update_face_normals();
     in->update_halfedge_normals(M_PI);
@@ -93,22 +93,24 @@ void MeshConverter::convert(vortex::Mesh *in, DefaultPolyMesh *out){
 
     std::vector<DefaultPolyMesh::VertexHandle> face_vhandles;
 
-    for(int i=0; i<in->numIndices(); i++){
+    for(int i=0; i<in->numIndices(); i++)
+    {
         glm::vec3 p = in->vertices()[in->indices()[i]].mVertex;
         using vortex::util::operator<<;
         vMap::iterator vtr = vertexHandles.find(p);
         DefaultPolyMesh::VertexHandle vh;
-        if(vtr == vertexHandles.end()){
+        if(vtr == vertexHandles.end())
+        {
             vh = out->add_vertex( DefaultPolyMesh::Point(p.x, p.y, p.z));
             vertexHandles.insert( vtr, vMap::value_type(p, vh) );
         }
-        else{
+        else
+        {
             vh = vtr->second;
         }
         face_vhandles.push_back(vh);
-        if(((i+1)%3)==0){
-
-
+        if(((i+1)%3)==0)
+        {
             DefaultPolyMesh::FaceHandle fh = out->add_face(face_vhandles);
             //!@warning fh halfedge points to the first vertex of vhandles, but it is not clearly specified
             DefaultPolyMesh::HalfedgeHandle hh = out->halfedge_handle(fh);

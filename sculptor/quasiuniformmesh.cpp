@@ -2,7 +2,8 @@
 
 QuasiUniformMesh QuasiUniformMeshConverter::convert(DefaultPolyMesh *mesh)
 {
-    QuasiUniformMesh *qum;
+    QuasiUniformMesh *qum = new QuasiUniformMesh();
+    qum->request_halfedge_normals();
 
     OpenMesh::FPropHandleT<std::vector<QuasiUniformMesh::VertexHandle>> face_vhs;
     mesh->add_property(face_vhs);
@@ -37,30 +38,89 @@ QuasiUniformMesh QuasiUniformMeshConverter::convert(DefaultPolyMesh *mesh)
 
         std::vector<QuasiUniformMesh::VertexHandle> vertices = mesh->property(face_vhs, *f_it);
 
-        std::vector<QuasiUniformMesh::VertexHandle> sorted_vertices;
-        sorted_vertices.reserve(3);
+        QuasiUniformMesh::VertexHandle new_vh1, new_vh2, new_vh3;
+
+        QuasiUniformMesh::Point p;
 
         for(int i = 0; i < vertices.size(); i++)
         {
-            QuasiUniformMesh::Point p = qum->point(vertices[i]);
+            p = qum->point(vertices[i]);
 
             if(p[0] == p1[0] && p[1] == p1[1] && p[2] == p1[2])
-                sorted_vertices[0] = vertices[i];
+                new_vh1 = vertices[i];
             else if(p[0] == p2[0] && p[1] == p2[1] && p[2] == p2[2])
-                sorted_vertices[1] = vertices[i];
+                new_vh2 = vertices[i];
             else if(p[0] == p3[0] && p[1] == p3[1] && p[2] == p3[2])
-                sorted_vertices[2] = vertices[i];
+                new_vh3 = vertices[i];
         }
 
-        qum->add_face(sorted_vertices);
+        qum->add_face(new_vh1, new_vh2, new_vh3);
     }
 
     return *qum;
 }
 
+DefaultPolyMesh QuasiUniformMeshConverter::convertBackPoly(QuasiUniformMesh *mesh)
+{
+    DefaultPolyMesh *dpm = new DefaultPolyMesh();
+    dpm->request_halfedge_normals();
+
+    OpenMesh::FPropHandleT<std::vector<DefaultPolyMesh::VertexHandle>> face_vhs;
+    mesh->add_property(face_vhs);
+
+    // Create all the vertices in the new DefaultPolyMesh
+    for(QuasiUniformMesh::VertexIter v_it = mesh->vertices_sbegin(); v_it != mesh->vertices_end(); ++v_it)
+    {
+        // Add vertex to DefaultPolyMesh
+        DefaultPolyMesh::VertexHandle vh = dpm->add_vertex(mesh->point(*v_it));
+
+        // Add the new vertex handle to each faces that the old vertex is attached to
+        for(QuasiUniformMesh::VertexFaceIter vf_it = mesh->vf_iter(*v_it); vf_it.is_valid(); ++vf_it)
+        {
+            mesh->property(face_vhs, *vf_it).push_back(vh);
+        }
+    }
+
+    // Create all the faces (and automatically edges and halfedges) in the new DefaultPolyMesh
+    for(QuasiUniformMesh::FaceIter f_it = mesh->faces_sbegin(); f_it != mesh->faces_end(); ++f_it)
+    {
+        QuasiUniformMesh::HalfedgeHandle heh_f1 = mesh->halfedge_handle(*f_it);
+        QuasiUniformMesh::HalfedgeHandle heh_f2 = mesh->next_halfedge_handle(heh_f1);
+        QuasiUniformMesh::HalfedgeHandle heh_f3 = mesh->next_halfedge_handle(heh_f2);
+        QuasiUniformMesh::VertexHandle old_vh1 = mesh->to_vertex_handle(heh_f1);
+        QuasiUniformMesh::VertexHandle old_vh2 = mesh->to_vertex_handle(heh_f2);
+        QuasiUniformMesh::VertexHandle old_vh3 = mesh->to_vertex_handle(heh_f3);
+        QuasiUniformMesh::Point p1 = mesh->point(old_vh1);
+        QuasiUniformMesh::Point p2 = mesh->point(old_vh2);
+        QuasiUniformMesh::Point p3 = mesh->point(old_vh3);
+
+        std::vector<DefaultPolyMesh::VertexHandle> vertices = mesh->property(face_vhs, *f_it);
+
+        QuasiUniformMesh::VertexHandle new_vh1, new_vh2, new_vh3;
+
+        QuasiUniformMesh::Point p;
+
+        for(int i = 0; i < vertices.size(); i++)
+        {
+            p = dpm->point(vertices[i]);
+
+            if(p[0] == p1[0] && p[1] == p1[1] && p[2] == p1[2])
+                new_vh1 = vertices[i];
+            else if(p[0] == p2[0] && p[1] == p2[1] && p[2] == p2[2])
+                new_vh2 = vertices[i];
+            else if(p[0] == p3[0] && p[1] == p3[1] && p[2] == p3[2])
+                new_vh3 = vertices[i];
+        }
+
+        dpm->add_face(new_vh1, new_vh2, new_vh3);
+    }
+
+    return *dpm;
+}
+
 QuasiUniformMesh QuasiUniformMeshConverter::convert(DefaultTriMesh *mesh)
 {
-    QuasiUniformMesh *qum;
+    QuasiUniformMesh *qum = new QuasiUniformMesh();
 
     OpenMesh::FPropHandleT<std::vector<QuasiUniformMesh::VertexHandle>> face_vhs;
     mesh->add_property(face_vhs);
@@ -93,26 +153,85 @@ QuasiUniformMesh QuasiUniformMeshConverter::convert(DefaultTriMesh *mesh)
 
         std::vector<QuasiUniformMesh::VertexHandle> vertices = mesh->property(face_vhs, *f_it);
 
-        std::vector<QuasiUniformMesh::VertexHandle> sorted_vertices;
-        sorted_vertices.reserve(3);
+        QuasiUniformMesh::VertexHandle new_vh1, new_vh2, new_vh3;
+
+        QuasiUniformMesh::Point p;
 
         for(int i = 0; i < vertices.size(); i++)
         {
-            QuasiUniformMesh::Point p = qum->point(vertices[i]);
+            p = qum->point(vertices[i]);
 
             if(p[0] == p1[0] && p[1] == p1[1] && p[2] == p1[2])
-                sorted_vertices[0] = vertices[i];
+                new_vh1 = vertices[i];
             else if(p[0] == p2[0] && p[1] == p2[1] && p[2] == p2[2])
-                sorted_vertices[1] = vertices[i];
+                new_vh2 = vertices[i];
             else if(p[0] == p3[0] && p[1] == p3[1] && p[2] == p3[2])
-                sorted_vertices[2] = vertices[i];
+                new_vh3 = vertices[i];
         }
 
-        qum->add_face(sorted_vertices);
+        qum->add_face(new_vh1, new_vh2, new_vh3);
     }
 
     return *qum;
 }
+
+DefaultTriMesh QuasiUniformMeshConverter::convertBackTri(QuasiUniformMesh *mesh)
+{
+    DefaultTriMesh *dpm = new DefaultTriMesh();
+
+    OpenMesh::FPropHandleT<std::vector<DefaultTriMesh::VertexHandle>> face_vhs;
+    mesh->add_property(face_vhs);
+
+    // Create all the vertices in the new DefaultTriMesh
+    for(QuasiUniformMesh::VertexIter v_it = mesh->vertices_sbegin(); v_it != mesh->vertices_end(); ++v_it)
+    {
+        // Add vertex to DefaultTriMesh
+        DefaultTriMesh::VertexHandle vh = dpm->add_vertex(mesh->point(*v_it));
+
+        // Add the new vertex handle to each faces that the old vertex is attached to
+        for(QuasiUniformMesh::VertexFaceIter vf_it = mesh->vf_iter(*v_it); vf_it.is_valid(); ++vf_it)
+        {
+            mesh->property(face_vhs, *vf_it).push_back(vh);
+        }
+    }
+
+    // Create all the faces (and automatically edges and halfedges) in the new DefaultTriMesh
+    for(QuasiUniformMesh::FaceIter f_it = mesh->faces_sbegin(); f_it != mesh->faces_end(); ++f_it)
+    {
+        QuasiUniformMesh::HalfedgeHandle heh_f1 = mesh->halfedge_handle(*f_it);
+        QuasiUniformMesh::HalfedgeHandle heh_f2 = mesh->next_halfedge_handle(heh_f1);
+        QuasiUniformMesh::HalfedgeHandle heh_f3 = mesh->next_halfedge_handle(heh_f2);
+        QuasiUniformMesh::VertexHandle old_vh1 = mesh->to_vertex_handle(heh_f1);
+        QuasiUniformMesh::VertexHandle old_vh2 = mesh->to_vertex_handle(heh_f2);
+        QuasiUniformMesh::VertexHandle old_vh3 = mesh->to_vertex_handle(heh_f3);
+        QuasiUniformMesh::Point p1 = mesh->point(old_vh1);
+        QuasiUniformMesh::Point p2 = mesh->point(old_vh2);
+        QuasiUniformMesh::Point p3 = mesh->point(old_vh3);
+
+        std::vector<DefaultTriMesh::VertexHandle> vertices = mesh->property(face_vhs, *f_it);
+
+        QuasiUniformMesh::VertexHandle new_vh1, new_vh2, new_vh3;
+
+        QuasiUniformMesh::Point p;
+
+        for(int i = 0; i < vertices.size(); i++)
+        {
+            p = dpm->point(vertices[i]);
+
+            if(p[0] == p1[0] && p[1] == p1[1] && p[2] == p1[2])
+                new_vh1 = vertices[i];
+            else if(p[0] == p2[0] && p[1] == p2[1] && p[2] == p2[2])
+                new_vh2 = vertices[i];
+            else if(p[0] == p3[0] && p[1] == p3[1] && p[2] == p3[2])
+                new_vh3 = vertices[i];
+        }
+
+        dpm->add_face(new_vh1, new_vh2, new_vh3);
+    }
+
+    return *dpm;
+}
+
 void QuasiUniformMeshConverter::makeUniform(QuasiUniformMesh *mesh, float edgeMin, float edgeMax)
 {
     float d = 0.2f;
