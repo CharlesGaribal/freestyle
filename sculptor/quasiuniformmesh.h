@@ -2,6 +2,7 @@
 #define QUASIUNIFORMMESH_H
 
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
+#include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <OpenMesh/Core/Utils/Property.hh>
 
 struct QuasiUniformMeshTraits : public OpenMesh::DefaultTraits
@@ -18,10 +19,15 @@ struct QuasiUniformMeshTraits : public OpenMesh::DefaultTraits
 
 typedef OpenMesh::TriMesh_ArrayKernelT<QuasiUniformMeshTraits> QuasiUniformMesh;
 
+typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMesh::DefaultTraits> DefaultPolyMesh;
+typedef OpenMesh::TriMesh_ArrayKernelT<OpenMesh::DefaultTraits> DefaultTriMesh;
+
 class QuasiUniformMeshConverter {
 public:
-    static void convert(QuasiUniformMesh *mesh, float edgeMin, float edgeMax);
-    static void convertRegion(QuasiUniformMesh *mesh, const std::vector<OpenMesh::VertexHandle> &region, float edgeMin, float edgeMax);
+    static QuasiUniformMesh convert(DefaultPolyMesh *mesh);
+    static QuasiUniformMesh convert(DefaultTriMesh *mesh);
+    static void makeUniform(QuasiUniformMesh *mesh, float edgeMin, float edgeMax);
+    static void makeUniformField(QuasiUniformMesh *mesh, const std::vector<OpenMesh::VertexHandle> &region, float edgeMin, float edgeMax);
 };
 
 #endif // QUASIUNIFORMMESH_H

@@ -2,7 +2,7 @@
 #include "timer.h"
 
 
-void MeshConverter::convert(QuasiUniformMesh *in, vortex::Mesh *out){
+void MeshConverter::convert(DefaultPolyMesh *in, vortex::Mesh *out){
 
     vortex::Timer timer;
     struct comp_vec{
@@ -40,16 +40,16 @@ void MeshConverter::convert(QuasiUniformMesh *in, vortex::Mesh *out){
     timer.start();
     // iterator over all faces
     unsigned int vertexIndex = 0;
-    for (QuasiUniformMesh::FaceIter f_it=in->faces_begin(); f_it!=in->faces_end(); ++f_it){
+    for (DefaultPolyMesh::FaceIter f_it=in->faces_begin(); f_it!=in->faces_end(); ++f_it){
         vortex::Mesh::VertexData v;
         int indices[3];
         int i=0;
 
         // iterator over vertex (thru haldedge to get access to halfedge normals)
-        for(QuasiUniformMesh::FaceHalfedgeIter fv_it = in->fh_iter(*f_it); fv_it.is_valid(); ++fv_it){
+        for(DefaultPolyMesh::FaceHalfedgeIter fv_it = in->fh_iter(*f_it); fv_it.is_valid(); ++fv_it){
             assert(i<3);
-            QuasiUniformMesh::Point p = in->point(in->to_vertex_handle(*fv_it));
-            QuasiUniformMesh::Normal n = in->normal(*fv_it);
+            DefaultPolyMesh::Point p = in->point(in->to_vertex_handle(*fv_it));
+            DefaultPolyMesh::Normal n = in->normal(*fv_it);
             v.mVertex = glm::vec3(p[0], p[1], p[2]);
             v.mNormal = glm::vec3(n[0], n[1], n[2]);
 
@@ -79,7 +79,7 @@ void MeshConverter::convert(QuasiUniformMesh *in, vortex::Mesh *out){
     out->setData("subdivided", &(meshVertices[0]), meshVertices.size(), &(meshIndices[0]), meshIndices.size());
 }
 
-void MeshConverter::convert(vortex::Mesh *in, QuasiUniformMesh *out){
+void MeshConverter::convert(vortex::Mesh *in, DefaultPolyMesh *out){
     out->request_halfedge_normals();
 
     struct comp_vec{
@@ -88,18 +88,18 @@ void MeshConverter::convert(vortex::Mesh *in, QuasiUniformMesh *out){
         }
     };
 
-    typedef std::map<glm::vec3, QuasiUniformMesh::VertexHandle, comp_vec> vMap;
+    typedef std::map<glm::vec3, DefaultPolyMesh::VertexHandle, comp_vec> vMap;
     vMap vertexHandles;
 
-    std::vector<QuasiUniformMesh::VertexHandle> face_vhandles;
+    std::vector<DefaultPolyMesh::VertexHandle> face_vhandles;
 
     for(int i=0; i<in->numIndices(); i++){
         glm::vec3 p = in->vertices()[in->indices()[i]].mVertex;
         using vortex::util::operator<<;
         vMap::iterator vtr = vertexHandles.find(p);
-        QuasiUniformMesh::VertexHandle vh;
+        DefaultPolyMesh::VertexHandle vh;
         if(vtr == vertexHandles.end()){
-            vh = out->add_vertex( QuasiUniformMesh::Point(p.x, p.y, p.z));
+            vh = out->add_vertex( DefaultPolyMesh::Point(p.x, p.y, p.z));
             vertexHandles.insert( vtr, vMap::value_type(p, vh) );
         }
         else{
@@ -109,21 +109,21 @@ void MeshConverter::convert(vortex::Mesh *in, QuasiUniformMesh *out){
         if(((i+1)%3)==0){
 
 
-            QuasiUniformMesh::FaceHandle fh = out->add_face(face_vhandles);
+            DefaultPolyMesh::FaceHandle fh = out->add_face(face_vhandles);
             //!@warning fh halfedge points to the first vertex of vhandles, but it is not clearly specified
-            QuasiUniformMesh::HalfedgeHandle hh = out->halfedge_handle(fh);
+            DefaultPolyMesh::HalfedgeHandle hh = out->halfedge_handle(fh);
             glm::vec3 n;
 
             n = in->vertices()[in->indices()[i-2]].mNormal;
-            out->set_normal(hh, QuasiUniformMesh::Normal(n.x, n.y, n.z));
+            out->set_normal(hh, DefaultPolyMesh::Normal(n.x, n.y, n.z));
 
             hh = out->next_halfedge_handle(hh);
             n = in->vertices()[in->indices()[i-1]].mNormal;
-            out->set_normal(hh, QuasiUniformMesh::Normal(n.x, n.y, n.z));
+            out->set_normal(hh, DefaultPolyMesh::Normal(n.x, n.y, n.z));
 
             hh = out->next_halfedge_handle(hh);
             n = in->vertices()[in->indices()[i]].mNormal;
-            out->set_normal(hh, QuasiUniformMesh::Normal(n.x, n.y, n.z));
+            out->set_normal(hh, DefaultPolyMesh::Normal(n.x, n.y, n.z));
 
             face_vhandles.clear();
         }

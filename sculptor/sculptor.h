@@ -15,7 +15,7 @@ public:
 
     void setMesh(QuasiUniformMesh *mesh) {
         if (params.valid())
-            QuasiUniformMeshConverter::convert(mesh, params.getMinEdgeLength(), params.getMaxEdgeLength());
+            QuasiUniformMeshConverter::makeUniform(mesh, params.getMinEdgeLength(), params.getMaxEdgeLength());
     }
 
 private:
