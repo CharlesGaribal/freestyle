@@ -217,7 +217,7 @@ void FtylRenderer::setViewport(int width, int height)
 void FtylRenderer::initRessources(AssetManager *assetManager){
 
     assetManager->setShaderFileExtentions(std::string(".vert.glsl"), std::string(".frag.glsl"));
-    assetManager->setShaderBasePath(std::string("../src/freestyle/shaders/"));
+    assetManager->setShaderBasePath(std::string("../freestyle/freestyle/shaders/"));
 
     /*
      * Image Computation shaders

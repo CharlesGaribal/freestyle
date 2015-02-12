@@ -11,7 +11,7 @@ find_package(Qt5Gui REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 
 include_directories(
-   ${CMAKE_SOURCE_DIR}/src/engine
+   ${CMAKE_SOURCE_DIR}/freestyle/engine
    ${GLM_INC}
    ${ASSIMP_INC}
    ${HEADER_PATH}

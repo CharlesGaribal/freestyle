@@ -16,12 +16,12 @@ QT5_WRAP_CPP(freestyle_MOC_SRCS ${freestyle_MOC_HDRS})
 QT5_WRAP_UI(freestyle_UIS_HDRS mainwindow.ui parametersdialog.ui toolsdialog.ui)
 include_directories(
    ${CMAKE_CURRENT_BINARY_DIR}
-   ${CMAKE_SOURCE_DIR}/src/engine
-   ${CMAKE_SOURCE_DIR}/src/sculptor
+   ${CMAKE_SOURCE_DIR}/freestyle/engine
+   ${CMAKE_SOURCE_DIR}/freestyle/sculptor
    ${GLM_INC}
    ${ASSIMP_INC}
    ${OPENMESH_INC}
-   ${CMAKE_SOURCE_DIR}/src/freestyle/
+   ${CMAKE_SOURCE_DIR}/freestyle/freestyle/
 )
 
 
