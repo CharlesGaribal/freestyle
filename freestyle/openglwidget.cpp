@@ -185,22 +185,26 @@ void OpenGLWidget::mousePressEvent ( QMouseEvent * e ) {
             MeshConverter::convert(mesh_, &m1);
             mesh_->release();
             timer.stop();
+            std::cout << "convert vortexmesh -> polymesh " << timer.value() <<std::endl;
 
             timer.reset();
             timer.start();
             QuasiUniformMesh qum;
             QuasiUniformMeshConverter::convert(&m1, &qum);
             timer.stop();
+            std::cout << "convert polymesh -> quasiuniformmesh " << timer.value() <<std::endl;
 
             timer.reset();
             timer.start();
             QuasiUniformMeshConverter::makeUniform(&qum, 0.1, 0.2);
             timer.stop();
+            std::cout << "makeUniform " << timer.value() <<std::endl;
 
             timer.reset();
             timer.start();
             QuasiUniformMeshConverter::convert(&qum, &m2);
             timer.stop();
+            std::cout << "convert quasiuniformmesh -> polymesh " << timer.value() <<std::endl;
 
             timer.reset();
             timer.start();

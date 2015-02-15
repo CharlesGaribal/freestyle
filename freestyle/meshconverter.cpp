@@ -76,7 +76,7 @@ void MeshConverter::convert(DefaultPolyMesh *in, vortex::Mesh *out){
     timer.stop();
     std::cout << "timer parcours mesh " << timer.value() << std::endl;
 
-    out->setData("subdivided", &(meshVertices[0]), meshVertices.size(), &(meshIndices[0]), meshIndices.size());
+    out->setData(out->name(), &(meshVertices[0]), meshVertices.size(), &(meshIndices[0]), meshIndices.size());
 }
 
 void MeshConverter::convert(vortex::Mesh *in, DefaultPolyMesh *out){

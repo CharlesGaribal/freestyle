@@ -11,11 +11,15 @@ class Sculptor
 public:
     Sculptor(const SculptorParameters &params);
 
-    void operator()(OpenMesh::VertexHandle vcenter, float radius, const Operator::AdditionnalParameters &opParams);
+    void operator()(QuasiUniformMesh::VertexHandle vcenter, float radius, const Operator::AdditionnalParameters &opParams);
 
-    void setMesh(QuasiUniformMesh *mesh) {
+    template<typename OpenMesh_type>
+    void setMesh(OpenMesh_type *mesh) {
+
+        QuasiUniformMeshConverter::convert(mesh, qum);
+
         if (params.valid())
-            QuasiUniformMeshConverter::makeUniform(mesh, params.getMinEdgeLength(), params.getMaxEdgeLength());
+            QuasiUniformMeshConverter::makeUniform(qum, params.getMinEdgeLength(), params.getMaxEdgeLength());
     }
 
 private:
@@ -29,11 +33,14 @@ private:
     QuasiUniformMesh *qum;
 
     // Informations about current deformation
-    std::vector<OpenMesh::VertexHandle> field;
-    OpenMesh::VertexHandle vcenter;
+    std::vector<QuasiUniformMesh::VertexHandle> field_vertices;
+    std::vector<QuasiUniformMesh::EdgeHandle> field_edges;
+    QuasiUniformMesh::VertexHandle vcenter;
+    QuasiUniformMesh::Point vcenter_pos;
     float radius;
 
     void buildField();
+    inline float calcDist(QuasiUniformMesh::Point p1, QuasiUniformMesh::Point p2){ return sqrt(pow(p1[0]-p2[0], 2) + pow(p1[1]-p2[1], 2) + pow(p1[2]-p2[2], 2)); }
 };
 
 #endif // SCULPTOR_H
