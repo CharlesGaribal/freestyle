@@ -7,13 +7,13 @@ SculptorParameters::SculptorParameters(float minEdgeLength, float maxEdgeLength,
         this->minEdgeLength = minEdgeLength;
         this->maxEdgeLength = maxEdgeLength;
         dMove = dmove;
-        dthickness = dthickness;
+        dThickness = dthickness;
     } else {
         // Invalid values
         this->minEdgeLength = 0;
         this->maxEdgeLength = 0;
         dMove = 0;
-        dthickness = 0;
+        dThickness = 0;
     }
 }
 
@@ -58,10 +58,10 @@ bool SculptorParameters::valid() {
 }
 
 bool SculptorParameters::validMinMaxEdge(float min, float max) {
-    return min > 0 && min <= max/2;
+    return min > 0 && min <= max/2.;
 }
 
 bool SculptorParameters::validLemme(float dmove, float dthickness, float ddetail) {
-    return dmove <= (dthickness - ddetail/sqrt(3)) / 2;
+    return dmove <= (dthickness - ddetail/sqrt(3)) / 2.;
 }
 

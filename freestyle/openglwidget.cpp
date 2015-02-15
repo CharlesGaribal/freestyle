@@ -175,7 +175,6 @@ void OpenGLWidget::mousePressEvent ( QMouseEvent * e ) {
             std::cerr << "materialId : " << selectionBuffer[0] << " -- meshId : " << selectionBuffer[1] << " -- faceId : " << selectionBuffer[2] << std::endl;
 
             //Convert the mesh (test)
-            std::cout << "convert and makeUniform" <<std::endl;
             vortex::Mesh *mesh_ = assetManager_->getMesh(selectionBuffer[1]);
             Timer timer;
             DefaultPolyMesh m1, m2;
@@ -187,24 +186,9 @@ void OpenGLWidget::mousePressEvent ( QMouseEvent * e ) {
             timer.stop();
             std::cout << "convert vortexmesh -> polymesh " << timer.value() <<std::endl;
 
-            timer.reset();
-            timer.start();
-            QuasiUniformMesh qum;
-            QuasiUniformMeshConverter::convert(&m1, &qum);
-            timer.stop();
-            std::cout << "convert polymesh -> quasiuniformmesh " << timer.value() <<std::endl;
+            sculptor->setMesh(m1);
 
-            timer.reset();
-            timer.start();
-            QuasiUniformMeshConverter::makeUniform(&qum, 0.1, 0.2);
-            timer.stop();
-            std::cout << "makeUniform " << timer.value() <<std::endl;
-
-            timer.reset();
-            timer.start();
-            QuasiUniformMeshConverter::convert(&qum, &m2);
-            timer.stop();
-            std::cout << "convert quasiuniformmesh -> polymesh " << timer.value() <<std::endl;
+            sculptor->getMesh(m2);
 
             timer.reset();
             timer.start();
@@ -254,6 +238,7 @@ bool OpenGLWidget::loadScene(std::string fileName){
     delete assetManager_;
     assetManager_ = new AssetManager();
     sceneManager_->setAssetManager(assetManager_);
+
     bool ret = sceneManager_->loadScene(fileName);
 
     if(ret) {

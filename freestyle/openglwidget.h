@@ -33,7 +33,7 @@
 #include <QGLWidget>
 #include <QImage>
 
-
+#include "sculptor.h"
 
 /**
    @author Mathias Paulin <Mathias.Paulin@irit.fr>
@@ -59,6 +59,8 @@ public:
     vortex::SceneManager *sceneManager(){ return sceneManager_; }
     void switchRenderingMode(bool on);
 
+    inline void setSculptor(Sculptor &s){ sculptor = &s; }
+
 protected:
     void initializeGL();
     void resizeGL ( int w, int h );
@@ -82,6 +84,8 @@ private:
     int height_;
 
     vortex::ui::CameraController *cameraController_;
+
+    Sculptor *sculptor;
 
     /* For picking */
     vortex::Picker *objectpicker_;

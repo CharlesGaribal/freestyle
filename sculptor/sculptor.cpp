@@ -18,7 +18,7 @@ void Sculptor::operator()(QuasiUniformMesh::VertexHandle vcenter, float radius, 
     Operator &op = ops[currentOp];
     op(opParams);
 
-    QuasiUniformMeshConverter::makeUniformField(qum, field_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
+    QuasiUniformMeshConverter::makeUniformField(*qum, field_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
 
     switch(op.getTopologicalChange()) {
         case Operator::NONE:
