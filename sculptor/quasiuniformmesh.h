@@ -5,6 +5,12 @@
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <OpenMesh/Core/Utils/Property.hh>
 
+struct ScaleFactor{
+    float x;
+    float y;
+    float z;
+};
+
 struct QuasiUniformMeshTraits : public OpenMesh::DefaultTraits
 {
     typedef OpenMesh::Vec3f Point;
@@ -28,7 +34,7 @@ public:
     static void makeUniformField(QuasiUniformMesh &mesh, const std::vector<OpenMesh::EdgeHandle> &field, float edgeMin, float edgeMax);
 
     template<typename T_in, typename T_out>
-    static void convert(T_in &in, T_out &out)
+    static void convert(T_in &in, T_out &out, ScaleFactor &s)
     {
         out.request_halfedge_normals();
 
@@ -41,7 +47,11 @@ public:
         for(typename T_in::VertexIter v_it = in.vertices_sbegin(); v_it != in.vertices_end(); ++v_it)
         {
             // Add vertex to T_out
-            typename T_out::VertexHandle vh = out.add_vertex(in.point(*v_it));
+            typename T_out::Point p = in.point(*v_it);
+            p[0] *= s.x;
+            p[1] *= s.y;
+            p[2] *= s.z;
+            typename T_out::VertexHandle vh = out.add_vertex(p);
 
             // Add the new vertex handle to each faces that the old vertex is attached to
             for(typename T_in::VertexFaceIter vf_it = in.vf_iter(*v_it); vf_it.is_valid(); ++vf_it)
@@ -62,6 +72,18 @@ public:
             typename T_in::Point p1 = in.point(old_vh1);
             typename T_in::Point p2 = in.point(old_vh2);
             typename T_in::Point p3 = in.point(old_vh3);
+
+            p1[0] *= s.x;
+            p1[1] *= s.y;
+            p1[2] *= s.z;
+
+            p2[0] *= s.x;
+            p2[1] *= s.y;
+            p2[2] *= s.z;
+
+            p3[0] *= s.x;
+            p3[1] *= s.y;
+            p3[2] *= s.z;
 
             std::vector<typename T_out::VertexHandle> vertices = in.property(face_vhs, *f_it);
 

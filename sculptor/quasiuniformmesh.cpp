@@ -2,8 +2,8 @@
 
 void QuasiUniformMeshConverter::makeUniform(QuasiUniformMesh &mesh, float edgeMin, float edgeMax)
 {
-    edgeMin = 0.2f;
-    edgeMax = 0.5f;
+    //edgeMin = 0.2f;
+    //edgeMax = 0.5f;
 
     // Compliance to edgeMin
     for (QuasiUniformMesh::EdgeIter e_it = mesh.edges_sbegin(); e_it != mesh.edges_end(); ++e_it)

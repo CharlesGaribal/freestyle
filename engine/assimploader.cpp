@@ -221,6 +221,8 @@ void  AssimpLoader::fillLeafNode(aiNode *currentInputNode, SceneGraph::LeafMeshN
             std::string meshName = currentInputNode->mName.data;
             aiMesh *inputMesh = inputScene->mMeshes[currentInputNode->mMeshes[0]];
             (*currentOutputNode)[0] = buildMesh(inputMesh, meshName, mResources);
+            //std::cout << "mesh id: " << (*currentOutputNode)[0]->meshId() << "  name: " << (*currentOutputNode)[0]->name() << std::endl;
+            (*currentOutputNode)[0]->setTransformMatrix(matrix);
             Material *meshMaterial = mResources->getMaterial(inputMesh->mMaterialIndex);
             currentOutputNode->getRenderState(0)->setMaterial(meshMaterial);
 
@@ -231,6 +233,8 @@ void  AssimpLoader::fillLeafNode(aiNode *currentInputNode, SceneGraph::LeafMeshN
                 std::string meshName(str.str());
                 aiMesh *inputMesh = inputScene->mMeshes[currentInputNode->mMeshes[i]];
                 (*currentOutputNode)[i] = buildMesh(inputMesh, meshName, mResources);
+                //std::cout << "mesh id: " << (*currentOutputNode)[i]->meshId() << "  name: " << (*currentOutputNode)[i]->name() << std::endl;
+                (*currentOutputNode)[i]->setTransformMatrix(matrix);
                 Material *meshMaterial = mResources->getMaterial(inputMesh->mMaterialIndex);
                 currentOutputNode->getRenderState(i)->setMaterial(meshMaterial);
             }
