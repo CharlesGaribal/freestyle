@@ -22,7 +22,7 @@ float SculptorParameters::getMinEdgeLength() const {
 }
 
 void SculptorParameters::setMinEdgeLength(float length) {
-    if (validMinMaxEdge(length, maxEdgeLength))
+    //if (validMinMaxEdge(length, maxEdgeLength))
         minEdgeLength = length;
 }
 
@@ -31,7 +31,7 @@ float SculptorParameters::getMaxEdgeLength() const {
 }
 
 void SculptorParameters::setMaxEdgeLength(float length) {
-    if (validMinMaxEdge(minEdgeLength, length) && validLemme(dMove, dThickness, length))
+    //if (validMinMaxEdge(minEdgeLength, length) && validLemme(dMove, dThickness, length))
         maxEdgeLength = length;
 }
 
@@ -40,7 +40,7 @@ float SculptorParameters::getDMove() const {
 }
 
 void SculptorParameters::setDMove(float value) {
-    if (validLemme(value, dThickness, maxEdgeLength))
+    //if (validLemme(value, dThickness, maxEdgeLength))
         dMove = value;
 }
 
@@ -49,7 +49,7 @@ float SculptorParameters::getDThickness() const {
 }
 
 void SculptorParameters::setDThickness(float value) {
-    if (validLemme(dMove, value, maxEdgeLength))
+    //if (validLemme(dMove, value, maxEdgeLength))
         dThickness = value;
 }
 

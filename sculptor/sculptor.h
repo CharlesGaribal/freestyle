@@ -23,6 +23,22 @@ public:
 
         QuasiUniformMeshConverter::convert(mesh, *qum);
 
+        float min, max, avg;
+        getMinMaxAvgEdgeLength(min, max, avg);
+
+        std::cout << "min: " << min << "  max: " << max << "  avg: " << avg << std::endl;
+
+        max = avg;
+        min = max / 2.;
+        params.setMinEdgeLength(min);
+        params.setMaxEdgeLength(max);
+        float dthickness = (max)/sqrt(3.f) + 0.3f;
+        float dmove = (dthickness - ((max)/sqrt(3.f))) / 2.f - 0.1f;
+        params.setDThickness(dthickness);
+        params.setDMove(dmove);
+
+        std::cout << "param min: " << min << "  max: " << max << "  dmove: " << dmove << "  dthickness: " << dthickness << std::endl;
+
         if (params.valid())
             QuasiUniformMeshConverter::makeUniform(*qum, params.getMinEdgeLength(), params.getMaxEdgeLength());
         else
@@ -54,6 +70,7 @@ private:
 
     void buildField();
 
+    void getMinMaxAvgEdgeLength(float &min, float &max, float &avg);
 };
 
 #endif // SCULPTOR_H

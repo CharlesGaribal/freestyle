@@ -59,3 +59,24 @@ void Sculptor::buildField()
             field_edges.push_back(*e_it);
     }
 }
+
+void Sculptor::getMinMaxAvgEdgeLength(float &min, float &max, float &avg)
+{
+    min = FLT_MAX;
+    max = 0;
+    avg = 0;
+
+    for(QuasiUniformMesh::EdgeIter e_it = qum->edges_sbegin(); e_it != qum->edges_end(); ++e_it)
+    {
+        float length = qum->calc_edge_length(*e_it);
+
+        if(length < min)
+            min = length;
+        else if(length > max)
+            max = length;
+
+        avg += length;
+    }
+
+    avg /= qum->n_edges();
+}

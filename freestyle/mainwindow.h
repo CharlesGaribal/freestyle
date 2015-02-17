@@ -7,7 +7,7 @@
 #include <openglwidget.h>
 #include "parametersdialog.h"
 #include "toolsdialog.h"
-#include "sculptor.h"
+#include "../sculptor/sculptor.h"
 
 namespace Ui {
 class MainWindow;

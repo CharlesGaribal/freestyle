@@ -182,6 +182,9 @@ public:
     void setMeshId(int meshId);
 
 
+    glm::mat4x4 getTransformMatrix() const;
+    void setTransformMatrix(const glm::mat4x4 &value);
+
 protected :
     std::string mName;
     // http://www.opengl.org/wiki/Vertex_Buffer_Object
@@ -192,6 +195,8 @@ protected :
     // faces are all triangles, there are nNumIndices/3 faces
     int mNumIndices;
     int *mIndices;
+
+    glm::mat4x4 mTransformMatrix;
 
     // OpenGL stuffs
     GLuint mVertexArrayObject;

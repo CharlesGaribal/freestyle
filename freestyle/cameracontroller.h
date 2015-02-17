@@ -1,7 +1,7 @@
 #ifndef CAMERACONTROLLER_H
 #define CAMERACONTROLLER_H
 
-#include <camera.h>
+#include <../engine/camera.h>
 #include <QMouseEvent>
 
 namespace vortex{
