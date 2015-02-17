@@ -89,12 +89,13 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
-void MainWindow::newSculpt() {
-
+void MainWindow::newSculpt()
+{
+    loadFile("../data/1sphere.dae");
 }
 
-void MainWindow::open() {
-    static QString path("");
+void MainWindow::open()
+{
     QString fileName = QFileDialog::getOpenFileName(this, "Open 3D scene", path);
 
     if (!fileName.isEmpty()) {
@@ -105,7 +106,14 @@ void MainWindow::open() {
     }
 }
 
-void MainWindow::loadFile(const QString &fileName) {
+void MainWindow::loadFile(const QString &fileName)
+{
+    if (!fileName.isEmpty())
+    {
+
+        // keep track of last valid dir
+        path = QFileInfo(fileName).absolutePath();
+    }
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         QMessageBox::warning (this, tr(APP_NAME),
@@ -149,12 +157,19 @@ QString MainWindow::strippedName(const QString &fullFileName) {
     return QFileInfo(fullFileName).fileName();
 }
 
-void MainWindow::save() {
-
+void MainWindow::save()
+{
 }
 
-void MainWindow::saveAs() {
+void MainWindow::saveAs()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, "Choose a file to save into", path);
 
+    if (!fileName.isEmpty())
+    {
+        // keep track of last valid dir
+        path = QFileInfo(fileName).absolutePath();
+    }
 }
 
 void MainWindow::resetCamera() {

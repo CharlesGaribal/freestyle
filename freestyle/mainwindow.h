@@ -62,6 +62,7 @@ private:
     QString nameFile;
 
     Sculptor *sculptor;
+    QString path;
 };
 
 #endif // MAINWINDOW_H
