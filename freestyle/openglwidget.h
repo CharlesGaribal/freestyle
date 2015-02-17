@@ -34,6 +34,9 @@
 #include <QImage>
 
 #include "../sculptor/sculptor.h"
+#include "sculptor.h"
+#include "sculptorcontroller.h"
+#include "timer.h"
 
 /**
    @author Mathias Paulin <Mathias.Paulin@irit.fr>
@@ -59,7 +62,9 @@ public:
     vortex::SceneManager *sceneManager(){ return sceneManager_; }
     void switchRenderingMode(bool on);
 
-    inline void setSculptor(Sculptor &s){ sculptor = &s; }
+    Sculptor *getSculptor() {
+        return sculptorController->getSculptor();
+    }
 
 protected:
     void initializeGL();
@@ -84,8 +89,10 @@ private:
     int height_;
 
     vortex::ui::CameraController *cameraController_;
+    SculptorController *sculptorController;
 
-    Sculptor *sculptor;
+    vortex::Timer timerPicking;
+    int timeRefreshPicking;
 
     /* For picking */
     vortex::Picker *objectpicker_;
