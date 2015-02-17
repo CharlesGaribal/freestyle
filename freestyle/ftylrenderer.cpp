@@ -74,6 +74,9 @@ void FtylRenderer::lightsPass(vortex::ShaderLoop &theRenderingLoop, const glm::m
             glm::mat4x4 lightMatrix = modelViewMatrix*mSceneManager->sceneGraph()->mLights[i].mTransform;
             Light l = Light(mSceneManager->sceneGraph()->mLights[i], lightMatrix);
             LightGlobalParameters lightParamameters(l);
+            lightParamameters.addParameter("inverseViewMatrix", viewToWorldMatrix);
+            lightParamameters.addParameter("vertexSelected", glm::vec4(mVertexSelected, 1.0));
+            lightParamameters.addParameter("isVertexSelected", mIsVertexSelected);
             theRenderingLoop.draw(lightParamameters, modelViewMatrix, projectionMatrix);
         }
     } else { // no lights in scene, set up a headlight
@@ -81,6 +84,8 @@ void FtylRenderer::lightsPass(vortex::ShaderLoop &theRenderingLoop, const glm::m
         l.mDiffuse=glm::vec3(4.0,4.0,4.0);
         LightGlobalParameters lightParamameters(l);
         lightParamameters.addParameter("inverseViewMatrix", viewToWorldMatrix);
+        lightParamameters.addParameter("vertexSelected", glm::vec4(mVertexSelected, 1.0));
+        lightParamameters.addParameter("isVertexSelected", mIsVertexSelected);
         theRenderingLoop.draw(lightParamameters, modelViewMatrix, projectionMatrix);
     }
 }

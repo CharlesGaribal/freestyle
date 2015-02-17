@@ -22,12 +22,6 @@ public:
     static const char* MANUAL_PATH;
     static const char* ABOUT_TEXT;
 
-    static const float DEFAULT_MAX_EDGE_LENGTH;
-    static const float DEFAULT_RATIO_MAX_MIN;
-    static const float DEFAULT_DTHICKNESS;
-    static const float DEFAULT_DMOVE;
-
-
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
@@ -60,8 +54,6 @@ private:
 
     QString curFile;
     QString nameFile;
-
-    Sculptor *sculptor;
 };
 
 #endif // MAINWINDOW_H

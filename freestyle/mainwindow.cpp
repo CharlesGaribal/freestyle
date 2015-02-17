@@ -21,16 +21,10 @@ const char* MainWindow::APP_NAME = "Freestyle";
 const char* MainWindow::MANUAL_PATH = "./manual/index.html";
 const char* MainWindow::ABOUT_TEXT = "<center><h1>Freestyle editor</h1></center>\n<center>Charles Garibal - Maxime Robinot - Mathieu Dachy</center>\n<center>Masterpiece 2014/2015</center>\n<center>Version 0.0.1</center>";
 
-const float MainWindow::DEFAULT_MAX_EDGE_LENGTH = 0.8;
-const float MainWindow::DEFAULT_RATIO_MAX_MIN = 2.05;
-const float MainWindow::DEFAULT_DTHICKNESS = 1.0;
-const float MainWindow::DEFAULT_DMOVE = 0.10;
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow),
     toolsDialog(this),
-    parametersDialog(this),
-    sculptor(new Sculptor(SculptorParameters(DEFAULT_MAX_EDGE_LENGTH/DEFAULT_RATIO_MAX_MIN, DEFAULT_MAX_EDGE_LENGTH, DEFAULT_DMOVE, DEFAULT_DTHICKNESS)))
+    parametersDialog(this)
 {
     ui->setupUi(this);
 
@@ -46,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     QGLFormat::setDefaultFormat(fmt);
 
     openGLWidget = new OpenGLWidget(this);
-    openGLWidget->setSculptor(*sculptor);
+    openGLWidget->setMouseTracking(true);
 
     if (!(QGLFormat::openGLVersionFlags() & QGLFormat::OpenGL_Version_3_2))
         std::cerr << "error context OpenGL" << std::endl;
@@ -82,6 +76,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     addAction(ui->actionParameters);
     addAction(ui->actionManual);
     addAction(ui->actionAbout);
+
+    loadFile("../ressources/bimba.off");
 }
 
 MainWindow::~MainWindow() {

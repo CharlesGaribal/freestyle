@@ -1,12 +1,11 @@
 #include "sculptor.h"
 
-Sculptor::Sculptor(const SculptorParameters &params) :
+Sculptor::Sculptor() :
     topHandler(this),
-    params(params),
     currentOp(-1)
 {}
 
-void Sculptor::operator()(QuasiUniformMesh::VertexHandle vcenter, float radius, const Operator::AdditionnalParameters &opParams)
+void Sculptor::operator()(QuasiUniformMesh::VertexHandle vcenter, float radius)
 {
     if (!params.valid() || ops.empty())
         return;
@@ -16,7 +15,7 @@ void Sculptor::operator()(QuasiUniformMesh::VertexHandle vcenter, float radius, 
     buildField();
 
     Operator &op = ops[currentOp];
-    op(opParams);
+    op();
 
     QuasiUniformMeshConverter::makeUniformField(*qum, field_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
 
