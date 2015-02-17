@@ -21,7 +21,7 @@ public:
 
         qum = new QuasiUniformMesh();
 
-        QuasiUniformMeshConverter::convert(mesh, *qum, scaleFactor);
+        QuasiUniformMeshConverter::convert(mesh, *qum);
 
         float min, max, avg;
         getMinMaxAvgEdgeLength(min, max, avg);
@@ -46,17 +46,7 @@ public:
     }
 
     template<typename OpenMesh_type>
-    inline void getMesh(OpenMesh_type &m)
-    {
-        ScaleFactor s;
-        s.x = 1./scaleFactor.x;
-        s.y = 1./scaleFactor.y;
-        s.z = 1./scaleFactor.z;
-        QuasiUniformMeshConverter::convert(*qum, m, s);
-    }
-
-    inline void setScaleFactor(float x, float y, float z){ scaleFactor.x = x; scaleFactor.y = y; scaleFactor.z = z; }
-    inline void getScaleFactor(float &x, float &y, float &z){ x = scaleFactor.x; y = scaleFactor.y; z = scaleFactor.z; }
+    inline void getMesh(OpenMesh_type &m){ QuasiUniformMeshConverter::convert(*qum, m); }
 
 private:
     TopologicalHandler topHandler;
@@ -67,8 +57,6 @@ private:
     int currentOp;
 
     QuasiUniformMesh *qum;
-
-    ScaleFactor scaleFactor;
 
     // Informations about current deformation
     std::vector<QuasiUniformMesh::VertexHandle> field_vertices;

@@ -186,8 +186,8 @@ void OpenGLWidget::mousePressEvent ( QMouseEvent * e ) {
             timer.stop();
             std::cout << "convert vortexmesh -> polymesh " << timer.value() <<std::endl;
 
-            glm::mat4x4 tMat = mesh_->getTransformMatrix();
-            sculptor->setScaleFactor(tMat[0][0], tMat[1][1], tMat[2][2]);
+            //glm::mat4x4 tMat = mesh_->getTransformMatrix();
+            //sculptor->setScaleFactor(tMat[0][0], tMat[1][1], tMat[2][2]);
 
             sculptor->setMesh(m1);
 
