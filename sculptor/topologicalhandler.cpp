@@ -1,16 +1,6 @@
 #include "topologicalhandler.h"
 #include "sculptor.h"
 
-//Sommet courant du second 1-ring
-struct VertexSecondRing
-{
-
-    //Distance du sommet par rapport au somment courant du premier 1-ring
-    float dist;
-    QuasiUniformMesh::VertexHandle v;
-    //Nombre de fois où le sommet est lié à un sommet du premier 1-ring
-    int nbUsing = 0;
-};
 
 TopologicalHandler::TopologicalHandler(Sculptor *sculptor) :
     sculptor(sculptor)
@@ -25,18 +15,30 @@ void TopologicalHandler::handleJoinVertex(OpenMesh::VertexHandle &v1, OpenMesh::
     float secondPlusProche = 99999999999;
     int idCpt = 0;
 
+    //Sommet courant du second 1-ring
+    struct VertexSecondRing
+    {
+        //Distance du sommet par rapport au somment courant du premier 1-ring
+        float dist;
+        QuasiUniformMesh::VertexHandle v;
+        //Nombre de fois où le sommet est lié à un sommet du premier 1-ring
+        int nbUsing = 0;
+    };
+    //Calcul de la valence du second 1-ring
+    for (QuasiUniformMesh::VertexVertexIter vv_it2 = sculptor->getQUM()->vv_iter(v2); vv_it2.is_valid(); ++vv_it2)
+    {
+        ++valence;
+    }
+
+    VertexSecondRing *vsr = new VertexSecondRing[valence];
+
     //parcour des vertex du premier 1-ring
     for (QuasiUniformMesh::VertexVertexIter vv_it = sculptor->getQUM()->vv_iter(v1); vv_it.is_valid(); ++vv_it)
     {
         v1Courant = sculptor->getQUM()->point(*vv_it);
         float dist;
-        //Calcul de la valence du second 1-ring
-        for (QuasiUniformMesh::VertexVertexIter vv_it2 = sculptor->getQUM()->vv_iter(v2); vv_it2.is_valid(); ++vv_it2)
-        {
-            ++valence;
-        }
+
         //Tableau de VertexSecondRing pour stocker les distances des sommets du second 1-ring avec le sommet courant vv_it
-        VertexSecondRing *vsr = new VertexSecondRing[valence];
 
         //Calcul des deux distances les plus proches du point courant
         for (QuasiUniformMesh::VertexVertexIter vv_it2 = sculptor->getQUM()->vv_iter(v2); vv_it2.is_valid(); ++vv_it2)
@@ -82,4 +84,9 @@ void TopologicalHandler::handleJoinVertex(OpenMesh::VertexHandle &v1, OpenMesh::
         idCpt = 0;
         valence = 0;
     }
+}
+
+void TopologicalHandler::cleanup(OpenMesh::VertexHandle &v1)
+{
+
 }

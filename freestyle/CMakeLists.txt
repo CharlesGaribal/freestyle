@@ -21,7 +21,7 @@ include_directories(
    ${GLM_INC}
    ${ASSIMP_INC}
    ${OPENMESH_INC}
-   ${CMAKE_SOURCE_DIR}/freestyle/freestyle/
+   ${CMAKE_SOURCE_DIR}/freestyle/freestyle
 )
 
 

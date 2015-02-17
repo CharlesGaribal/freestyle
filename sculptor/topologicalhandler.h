@@ -18,6 +18,7 @@ public:
     }
 
     void handleJoinVertex(OpenMesh::VertexHandle &v1, OpenMesh::VertexHandle &v2);
+    void cleanup(OpenMesh::VertexHandle &v1);
 
 private:
     Sculptor *sculptor;
