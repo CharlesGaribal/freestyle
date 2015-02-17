@@ -29,8 +29,11 @@ public:
             std::cout << "Erreur: paramètre quasi-uniforme non valide" << std::endl;
     }
 
+    QuasiUniformMesh* getQUM() {return this->qum;}
+
     template<typename OpenMesh_type>
     inline void getMesh(OpenMesh_type &m) { QuasiUniformMeshConverter::convert(*qum, m); }
+    inline float calcDist(QuasiUniformMesh::Point &p1, QuasiUniformMesh::Point &p2){ return sqrt(pow(p1[0]-p2[0], 2) + pow(p1[1]-p2[1], 2) + pow(p1[2]-p2[2], 2)); }
 
 private:
     TopologicalHandler topHandler;
@@ -50,7 +53,7 @@ private:
     float radius;
 
     void buildField();
-    inline float calcDist(QuasiUniformMesh::Point &p1, QuasiUniformMesh::Point &p2){ return sqrt(pow(p1[0]-p2[0], 2) + pow(p1[1]-p2[1], 2) + pow(p1[2]-p2[2], 2)); }
+
 };
 
 #endif // SCULPTOR_H
