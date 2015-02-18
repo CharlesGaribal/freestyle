@@ -234,6 +234,22 @@ bool OpenGLWidget::loadScene(std::string fileName){
         std::cerr << "Extend : " << ext[0] << " " << ext[1] << " " << ext[2] <<  std::endl;
         resetCamera();
 
+        //*
+        // Ne prend que le 1er mesh
+        vortex::Mesh *m = assetManager_->getMesh(0);
+        DefaultPolyMesh pm, pm2;
+
+        MeshConverter::convert(m, &pm);
+        m->release();
+
+        //sculptorController->getSculptor()->setRadius(0.2);
+        sculptorController->getSculptor()->setMesh(pm);
+        sculptorController->getSculptor()->getMesh(pm2);
+
+        MeshConverter::convert(&pm2, m);
+        m->init();
+        //*/
+
         /* For picking */
         if (objectpicker_)
                 delete objectpicker_;

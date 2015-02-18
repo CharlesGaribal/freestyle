@@ -56,6 +56,7 @@ void assimpexporter::buildAIScene(aiScene *out)
 
     //meshes
     //for(int i = 0; i < assetManager->numMeshs(); ++i)
+    int i = 0;
     {
         out->mMeshes[i] = buildAIMesh(assetManager->getMesh(i));
     }
