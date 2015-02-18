@@ -46,6 +46,15 @@ public:
     }
     float readDepthAt(int x, int y);
 
+    void setVertexSelected(glm::vec3 position) {
+        mIsVertexSelected = true;
+        mVertexSelected = position;
+    }
+
+    void noVertexSelected() {
+        mIsVertexSelected = false;
+    }
+
     void drawScreenQuad() { mScreenQuad->draw(); }
     void reloadShaders();
 
@@ -97,6 +106,10 @@ private:
     // render loops
     vortex::ShaderLoop mMainDrawLoop;
     vortex::ShaderLoop mAmbientAndNormalLoop;
+
+    // For picking
+    glm::vec3 mVertexSelected;
+    bool mIsVertexSelected;
 public:
 
     int width(){ return mWidth; }

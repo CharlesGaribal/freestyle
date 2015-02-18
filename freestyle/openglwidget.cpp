@@ -44,6 +44,9 @@ OpenGLWidget::OpenGLWidget ( QWidget *parent ) : QGLWidget ( parent ), camera_(N
     assetManager_ = new AssetManager();
     sceneManager_ = new SceneManager(assetManager_);
     renderer_ = new FtylRenderer(sceneManager_);
+    sculptorController = new SculptorController(renderer_);
+    timeRefreshPicking = 0.1;
+    timerPicking.start();
     cameraController_ = NULL;
 }
 
@@ -150,17 +153,11 @@ void OpenGLWidget::wheelEvent ( QWheelEvent * e ) {
 }
 
 void OpenGLWidget::mouseMoveEvent ( QMouseEvent * e ) {
-    cameraController_->mouseMoveEvent(e);
-    updateGL();
-}
+    if (e->modifiers() & Qt::ControlModifier)
+        cameraController_->mouseMoveEvent(e);
 
-void OpenGLWidget::mouseReleaseEvent ( QMouseEvent *e ) {
-    cameraController_->mouseReleaseEvent(e);
-}
-
-
-void OpenGLWidget::mousePressEvent ( QMouseEvent * e ) {
-    if (e->modifiers() & Qt::ControlModifier) {
+    timerPicking.stop();
+    if (timerPicking.value() > timeRefreshPicking) {
         int selectionBuffer[4];
         int found;
         camera_->setScreenWidthAndHeight(width_, height_);
@@ -169,36 +166,26 @@ void OpenGLWidget::mousePressEvent ( QMouseEvent * e ) {
         glm::mat4x4 modelViewMatrix = camera_->getModelViewMatrix();
         glm::mat4x4 projectionMatrix = camera_->getProjectionMatrix();
         found = select(modelViewMatrix, projectionMatrix, e->pos().x(), height_ - e->pos().y(), selectionBuffer);
-        if (found) {
+        if (found)
             std::cerr << "materialId : " << selectionBuffer[0] << " -- meshId : " << selectionBuffer[1] << " -- faceId : " << selectionBuffer[2] << std::endl;
 
-            //Convert the mesh (test)
-            vortex::Mesh *mesh_ = assetManager_->getMesh(selectionBuffer[1]);
-            Timer timer;
-            DefaultPolyMesh m1, m2;
-
-            timer.reset();
-            timer.start();
-            MeshConverter::convert(mesh_, &m1);
-            mesh_->release();
-            timer.stop();
-            std::cout << "convert vortexmesh -> polymesh " << timer.value() <<std::endl;
-
-            sculptor->setMesh(m1);
-
-            sculptor->getMesh(m2);
-
-            timer.reset();
-            timer.start();
-            MeshConverter::convert(&m2, mesh_);
-            timer.stop();
-            std::cout << "convert polymesh -> vortexmesh " << timer.value() <<std::endl;
-            mesh_->init();
-            updateGL();
-        }
+        sculptorController->mouseMoveEvent(e, selectionBuffer, found);
+        timerPicking.reset();
     }
+    timerPicking.start();
 
-    cameraController_->mousePressEvent(e);
+    updateGL();
+}
+
+void OpenGLWidget::mouseReleaseEvent ( QMouseEvent *e ) {
+    if (e->modifiers() & Qt::ControlModifier)
+        cameraController_->mouseReleaseEvent(e);
+}
+
+
+void OpenGLWidget::mousePressEvent ( QMouseEvent * e ) {
+    if (e->modifiers() & Qt::ControlModifier)
+        cameraController_->mousePressEvent(e);
     updateGL();
 }
 

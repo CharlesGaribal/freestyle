@@ -73,7 +73,8 @@ int AssetManager::addShaderProgram(ShaderProgram *program)
 
 unsigned int AssetManager::numMeshs() const
 {
-    return mNumMeshs;
+    //return mNumMeshs;
+    return mMeshs.size();
 }
 
 void AssetManager::addMesh(Mesh::MeshPtr themesh){

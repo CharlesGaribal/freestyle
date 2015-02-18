@@ -9,9 +9,9 @@
 class Sculptor
 {
 public:
-    Sculptor(const SculptorParameters &params);
+    Sculptor();
 
-    void operator()(QuasiUniformMesh::VertexHandle vcenter, float radius, const Operator::AdditionnalParameters &opParams);
+    void operator()(QuasiUniformMesh::VertexHandle vcenter, float radius);
 
     template<typename OpenMesh_type>
     void setMesh(OpenMesh_type &mesh)
@@ -47,6 +47,9 @@ public:
 
     template<typename OpenMesh_type>
     inline void getMesh(OpenMesh_type &m){ QuasiUniformMeshConverter::convert(*qum, m); }
+
+    float getRadius() const;
+    void setRadius(float value);
 
 private:
     TopologicalHandler topHandler;

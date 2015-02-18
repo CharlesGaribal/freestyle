@@ -17,6 +17,8 @@ in vec3 varLightVec;
 in vec3 varLightSpotDir;
 in vec4 varTexCoord;
 
+in float varDist;
+
 out vec4 outColor;
 
 #ifdef TEXTURE_DIFFUSE
@@ -47,6 +49,10 @@ vec3 getKd(){
 #else
     rho = Kd;
 #endif
+
+    if (varDist < 0.5 && varDist > 0)
+        rho = 1 - rho;
+
     return pow(rho, vec3(2.2));
 }
 
