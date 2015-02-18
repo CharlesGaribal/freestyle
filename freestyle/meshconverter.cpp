@@ -1,5 +1,5 @@
 #include "meshconverter.h"
-#include "timer.h"
+#include "../engine/timer.h"
 
 
 void MeshConverter::convert(DefaultPolyMesh *in, vortex::Mesh *out){

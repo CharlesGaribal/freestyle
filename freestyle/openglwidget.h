@@ -23,16 +23,17 @@
 
 #include "ftylrenderer.h"
 
-#include "scenemanager.h"
-#include "camera.h"
-#include "assetmanager.h"
-#include "scenemanager.h"
+#include "../engine/scenemanager.h"
+#include "../engine/camera.h"
+#include "../engine/assetmanager.h"
+#include "../engine/scenemanager.h"
 
-#include <picker.h>
+#include <../engine/picker.h>
 
 #include <QGLWidget>
 #include <QImage>
 
+#include "../sculptor/sculptor.h"
 #include "sculptor.h"
 #include "sculptorcontroller.h"
 #include "timer.h"

@@ -1,4 +1,4 @@
-#include "opengl.h"
+#include "../engine/opengl.h"
 #include "ftylrenderer.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
