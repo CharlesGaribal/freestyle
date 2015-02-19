@@ -28,8 +28,9 @@ public:
 
         std::cout << "min: " << min << "  max: " << max << "  avg: " << avg << std::endl;
 
-        max = avg;
-        min = max / 2.;
+        if(max > min*2)
+            max = min*2;
+
         params.setMinEdgeLength(min);
         params.setMaxEdgeLength(max);
         float dthickness = (max)/sqrt(3.f) + 0.3f;
