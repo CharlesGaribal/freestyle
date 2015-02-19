@@ -141,6 +141,8 @@ void TopologicalHandler::cleanup(OpenMesh::VertexHandle &v1)
             }
         }
     }
+
+    mesh->garbage_collection();
 }
 
 //Détermine si deux faces ont un edge en commun
