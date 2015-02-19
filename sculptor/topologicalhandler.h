@@ -21,6 +21,10 @@ public:
     void cleanup(OpenMesh::VertexHandle &v1);
 
 private:
+    bool hasOneEdgeSame(OpenMesh::FaceHandle &fh1, OpenMesh::FaceHandle &fh2);
+    bool hasSameVertices(OpenMesh::FaceHandle &fh1, OpenMesh::FaceHandle &fh2);
+    bool hasSameVertices(OpenMesh::EdgeHandle &eh1, OpenMesh::EdgeHandle &eh2);
+
     Sculptor *sculptor;
 };
 
