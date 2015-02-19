@@ -4,8 +4,6 @@
 
 void MeshConverter::convert(DefaultPolyMesh *in, vortex::Mesh *out){
 
-    glm::mat4x4 mat = out->getTransformMatrix();
-
     vortex::Timer timer;
     struct comp_vec{
         bool operator()(const vortex::Mesh::VertexData &lhv, const vortex::Mesh::VertexData &rhv) const {
@@ -52,7 +50,7 @@ void MeshConverter::convert(DefaultPolyMesh *in, vortex::Mesh *out){
             assert(i<3);
             DefaultPolyMesh::Point p = in->point(in->to_vertex_handle(*fv_it));
             DefaultPolyMesh::Normal n = in->normal(*fv_it);
-            v.mVertex = glm::vec3(p[0]/mat[0][0], p[1]/mat[1][1], p[2]/mat[2][2]);
+            v.mVertex = glm::vec3(p[0], p[1], p[2]);
             v.mNormal = glm::vec3(n[0], n[1], n[2]);
 
             int vi;
@@ -83,7 +81,6 @@ void MeshConverter::convert(DefaultPolyMesh *in, vortex::Mesh *out){
 
 void MeshConverter::convert(vortex::Mesh *in, DefaultPolyMesh *out){
     out->request_halfedge_normals();
-    glm::mat4x4 mat = in->getTransformMatrix();
 
     struct comp_vec{
         bool operator()(const glm::vec3 &lhv, const glm::vec3 &rhv) const{
@@ -104,7 +101,7 @@ void MeshConverter::convert(vortex::Mesh *in, DefaultPolyMesh *out){
         DefaultPolyMesh::VertexHandle vh;
         if(vtr == vertexHandles.end())
         {
-            vh = out->add_vertex( DefaultPolyMesh::Point(p.x*mat[0][0], p.y*mat[1][1], p.z*mat[2][2]));
+            vh = out->add_vertex( DefaultPolyMesh::Point(p.x, p.y, p.z));
             vertexHandles.insert( vtr, vMap::value_type(p, vh) );
         }
         else

@@ -104,17 +104,6 @@ void Mesh::setMeshId(int meshId)
 {
     meshId_ = meshId;
 }
-glm::mat4x4 Mesh::getTransformMatrix() const
-{
-    return mTransformMatrix;
-}
-
-void Mesh::setTransformMatrix(const glm::mat4x4 &value)
-{
-    mTransformMatrix = value;
-}
-
-
 
 void Mesh::init()
 {
