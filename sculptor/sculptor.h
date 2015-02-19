@@ -10,6 +10,7 @@ class Sculptor
 {
 public:
     Sculptor();
+    ~Sculptor();
 
     void loop(QuasiUniformMesh::Point vCenterPos);
 
@@ -53,6 +54,26 @@ public:
 
     inline float calcDist(QuasiUniformMesh::Point &p1, QuasiUniformMesh::Point &p2){ return sqrt(pow(p1[0]-p2[0], 2) + pow(p1[1]-p2[1], 2) + pow(p1[2]-p2[2], 2)); }
 
+    int addOperator(Operator *op) {
+        ops.push_back(op);
+        return ops.size()-1;
+    }
+
+    Operator *getOperator(int index) {
+        assert(index >= 0 && index < ops.size());
+        return ops[index];
+    }
+
+    void setCurrentOperator(int index) {
+        assert(index >= -1 && index < ops.size());
+        currentOp = index;
+    }
+
+    Operator *getCurrentOperator() {
+        return getOperator(currentOp);
+    }
+
+
     float getRadius() const;
     void setRadius(float value);
 
@@ -61,13 +82,13 @@ private:
 
     SculptorParameters params;
 
-    std::vector<Operator> ops;
+    std::vector<Operator*> ops;
     int currentOp;
 
     QuasiUniformMesh *qum;
 
     // Informations about current deformation
-    std::vector<QuasiUniformMesh::VertexHandle> field_vertices;
+    std::vector<std::pair<QuasiUniformMesh::VertexHandle, float>> field_vertices;
     std::vector<QuasiUniformMesh::EdgeHandle> field_edges;
     QuasiUniformMesh::VertexHandle vcenter;
 

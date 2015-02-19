@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-class SculptorController;
+#include "sculptorcontroller.h"
 
 namespace Ui {
 class ToolsDialog;
@@ -20,10 +20,14 @@ public:
     ~ToolsDialog();
 
     void setToolRadius(float toolRadius);
+    void setToolSelected(SculptorController::OperatorType type);
 
 protected slots:
     void on_radiusSlider_valueChanged(int value);
     void on_radiusSpinBox_valueChanged(double value);
+    void on_sweepButton_clicked();
+    void on_defInfButton_clicked();
+    void on_twistButton_clicked();
 
 private:
     float getFloatRadiusValue(int value);

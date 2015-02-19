@@ -38,6 +38,12 @@
        <property name="text">
         <string>Sweep</string>
        </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -45,12 +51,18 @@
        <property name="text">
         <string>Inflate/Deflate</string>
        </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="twistButton">
        <property name="text">
         <string>Twist</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

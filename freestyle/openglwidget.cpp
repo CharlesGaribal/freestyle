@@ -184,12 +184,19 @@ void OpenGLWidget::mouseMoveEvent ( QMouseEvent * e ) {
 void OpenGLWidget::mouseReleaseEvent ( QMouseEvent *e ) {
     if (!(e->modifiers() & Qt::ControlModifier))
         cameraController_->mouseReleaseEvent(e);
+
+    mainWindow->getSculptorController()->mouseReleaseEvent(e);
+
+    updateGL();
 }
 
 
 void OpenGLWidget::mousePressEvent ( QMouseEvent * e ) {
     if (!(e->modifiers() & Qt::ControlModifier))
         cameraController_->mousePressEvent(e);
+
+    mainWindow->getSculptorController()->mousePressEvent(e);
+
     updateGL();
 }
 
