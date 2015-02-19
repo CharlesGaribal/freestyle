@@ -33,7 +33,6 @@
 #include <QGLWidget>
 #include <QImage>
 
-#include "../sculptor/sculptor.h"
 #include "sculptor.h"
 #include "sculptorcontroller.h"
 #include "timer.h"

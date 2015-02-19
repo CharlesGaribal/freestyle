@@ -36,6 +36,8 @@ public:
     void mouseMoveEvent(QMouseEvent *e, int *selectionBuffer, bool found);
     void mouseWheelEvent(QWheelEvent *e);
 
+    void sceneLoaded();
+
     void toolRadiusChanged(float value);
     float getToolRadius() const;
 

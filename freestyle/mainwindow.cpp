@@ -138,7 +138,7 @@ void MainWindow::loadFile(const QString &fileName)
         setCurrentFile(fileName);
         openGLWidget->updateGL();
 
-        //sculptorController->sceneLoaded();
+        sculptorController->sceneLoaded();
     } else
         QMessageBox::warning(this, tr(APP_NAME), tr("Cannot read file %1\n%2").arg(fileName).arg(openGLWidget->sceneManager()->getLastErrorString()));
 }

@@ -1,6 +1,7 @@
 #include "sculptorcontroller.h"
 
 #include "mainwindow.h"
+#include "meshconverter.h"
 
 SculptorController::SculptorController(MainWindow *mw) :
     sculptor(),
@@ -29,7 +30,7 @@ void SculptorController::mouseMoveEvent(QMouseEvent *e, int *selectionBuffer, bo
         renderer->noSelection();
 }
 
-void SculptorController::mouseWheelEvent(QWheelEvent *e){
+void SculptorController::mouseWheelEvent(QWheelEvent *e) {
     if (e->modifiers() & Qt::ControlModifier) {
         float nSteps = 100;
         float stepRadius = (maxToolRadius - minToolRadius) / nSteps;
@@ -39,6 +40,22 @@ void SculptorController::mouseWheelEvent(QWheelEvent *e){
         if (newRadius >= minToolRadius && newRadius <= maxToolRadius)
             toolRadiusChanged(newRadius);
     }
+}
+
+void SculptorController::sceneLoaded() {
+    vortex::AssetManager *asset = mainWindow->getOGLWidget()->getRenderer()->getScene()->getAsset();
+
+    vortex::Mesh *m = asset->getMesh(0);
+    DefaultPolyMesh pm, pm2;
+
+    MeshConverter::convert(m, &pm);
+    m->release();
+
+    sculptor.setMesh(pm);
+    sculptor.getMesh(pm2);
+
+    MeshConverter::convert(&pm2, m);
+    m->init();
 }
 
 void SculptorController::toolRadiusChanged(float value) {

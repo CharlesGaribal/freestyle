@@ -26,6 +26,7 @@ void Sculptor::loop(QuasiUniformMesh::Point vCenterPos)
             break;
     }
 }
+
 float Sculptor::getRadius() const
 {
     return radius;
@@ -33,15 +34,6 @@ float Sculptor::getRadius() const
 
 void Sculptor::setRadius(float value)
 {
-    radius = value;
-}
-
-
-float Sculptor::getRadius() const {
-    return radius;
-}
-
-void Sculptor::setRadius(float value) {
     radius = value;
 }
 
