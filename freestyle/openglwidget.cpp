@@ -1,6 +1,6 @@
 #include "openglwidget.h"
 
-#include "timer.h"
+#include "../engine/timer.h"
 
 #include "meshconverter.h"
 

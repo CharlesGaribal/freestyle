@@ -1,10 +1,10 @@
 #ifndef FTYLRENDERER_H
 #define FTYLRENDERER_H
 
-#include "renderer.h"
-#include "skybox.h"
-#include "scenemanager.h"
-#include "camera.h"
+#include "../engine/renderer.h"
+#include "../engine/skybox.h"
+#include "../engine/scenemanager.h"
+#include "../engine/camera.h"
 
 #include <string>
 

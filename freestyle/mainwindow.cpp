@@ -1,4 +1,4 @@
-#include "opengl.h"
+#include "../engine/opengl.h"
 #include "ftylrenderer.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -12,6 +12,8 @@
 #include <QTextStream>
 #include <QCloseEvent>
 #include <QFileDialog>
+
+#include "assimpexporter.h"
 
 #include <iostream>
 
@@ -80,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     addAction(ui->actionManual);
     addAction(ui->actionAbout);
 
-    loadFile("../ressources/bimba.off");
+    loadFile("../data/bimba.off");
 }
 
 MainWindow::~MainWindow() {
@@ -91,12 +93,13 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
-void MainWindow::newSculpt() {
-
+void MainWindow::newSculpt()
+{
+    loadFile("../data/1sphere.dae");
 }
 
-void MainWindow::open() {
-    static QString path("");
+void MainWindow::open()
+{
     QString fileName = QFileDialog::getOpenFileName(this, "Open 3D scene", path);
 
     if (!fileName.isEmpty()) {
@@ -107,7 +110,13 @@ void MainWindow::open() {
     }
 }
 
-void MainWindow::loadFile(const QString &fileName) {
+void MainWindow::loadFile(const QString &fileName)
+{
+    if (!fileName.isEmpty())
+    {
+        // keep track of last valid dir
+        path = QFileInfo(fileName).absolutePath();
+    }
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         QMessageBox::warning (this, tr(APP_NAME),
@@ -153,12 +162,35 @@ QString MainWindow::strippedName(const QString &fullFileName) {
     return QFileInfo(fullFileName).fileName();
 }
 
-void MainWindow::save() {
+void MainWindow::save()
+{
+    vortex::assimpexporter exporter;
+    int i = curFile.lastIndexOf(".");
+    QString extension = curFile;
+    extension.remove(0, i+1);
 
+    if(exporter.exportScene(curFile.toStdString(), extension.toStdString(), openGLWidget->sceneManager()))
+        QMessageBox::warning(this, tr("Sauvegarde"), tr("Save successful !"));
+    else
+        QMessageBox::warning(this, tr("Sauvegarde"), tr("Save failed ! %1").arg(curFile));
 }
 
-void MainWindow::saveAs() {
+void MainWindow::saveAs()
+{
+    QString selectedFilter;
+    QString fileName = QFileDialog::getSaveFileName(this, "Choose a file to save into", path, "*.obj;;*.dae", &selectedFilter);
+    selectedFilter.remove(0, 1);
 
+    if (!fileName.isEmpty())
+    {
+        if(!fileName.endsWith(selectedFilter))
+            fileName.insert(fileName.length(), selectedFilter);
+
+        QString old_cur_File = curFile;
+        curFile = fileName;
+        save();
+        curFile = old_cur_File;
+    }
 }
 
 void MainWindow::resetCamera() {

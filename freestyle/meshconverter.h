@@ -1,8 +1,8 @@
 #ifndef MESHCONVERTER_H
 #define MESHCONVERTER_H
 
-#include <mesh.h>
-#include "quasiuniformmesh.h"
+#include <../engine/mesh.h>
+#include "../sculptor/quasiuniformmesh.h"
 
 class MeshConverter{
 public:

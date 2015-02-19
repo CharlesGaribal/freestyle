@@ -3,10 +3,10 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
-#include "timer.h"
+#include "../engine/timer.h"
 
 #include "meshconverter.h"
-#include "camera.h"
+#include "../engine/camera.h"
 
 using namespace vortex;
 using namespace vortex::util;

@@ -7,6 +7,7 @@
 #include <openglwidget.h>
 #include "parametersdialog.h"
 #include "toolsdialog.h"
+
 #include "sculptor.h"
 #include "openglwidget.h"
 
@@ -73,6 +74,9 @@ private:
 
     QString curFile;
     QString nameFile;
+
+    Sculptor *sculptor;
+    QString path;
 };
 
 #endif // MAINWINDOW_H
