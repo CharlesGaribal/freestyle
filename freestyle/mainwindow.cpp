@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     QGLFormat::setDefaultFormat(fmt);
 
     openGLWidget = new OpenGLWidget(this);
-    //openGLWidget->setMouseTracking(true);
+    openGLWidget->setMouseTracking(true);
 
     sculptorController = new SculptorController(this);
 
@@ -83,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     addAction(ui->actionAbout);
 
     //loadFile("../data/bimba.off");
+    loadFile("../data/1sphere.dae");
 }
 
 MainWindow::~MainWindow() {
@@ -139,7 +140,6 @@ void MainWindow::loadFile(const QString &fileName)
         openGLWidget->updateGL();
 
         sculptorController->sceneLoaded();
-        openGLWidget->setMouseTracking(true);
     } else
         QMessageBox::warning(this, tr(APP_NAME), tr("Cannot read file %1\n%2").arg(fileName).arg(openGLWidget->sceneManager()->getLastErrorString()));
 }
