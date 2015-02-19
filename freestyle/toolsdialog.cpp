@@ -1,6 +1,7 @@
 #include "toolsdialog.h"
 #include "ui_toolsdialog.h"
 #include "mainwindow.h"
+#include "sculptorcontroller.h"
 
 ToolsDialog::ToolsDialog(QWidget *parent, SculptorController *controller) : QDialog(parent),
     ui(new Ui::ToolsDialog),
@@ -30,6 +31,31 @@ void ToolsDialog::setToolRadius(float toolRadius) {
     ui->radiusSpinBox->blockSignals(false);
 }
 
+void ToolsDialog::setToolSelected(SculptorController::OperatorType type) {
+    switch (type) {
+        case SculptorController::OperatorType::SWEEP:
+            ui->defInfButton->setChecked(false);
+            ui->sweepButton->setChecked(true);
+            ui->twistButton->setChecked(false);
+            break;
+        case SculptorController::OperatorType::INFDEFLATE:
+            ui->defInfButton->setChecked(true);
+            ui->sweepButton->setChecked(false);
+            ui->twistButton->setChecked(false);
+            break;
+        case SculptorController::OperatorType::TWIST:
+            ui->defInfButton->setChecked(false);
+            ui->sweepButton->setChecked(false);
+            ui->twistButton->setChecked(true);
+            break;
+        default:
+            ui->defInfButton->setChecked(false);
+            ui->sweepButton->setChecked(false);
+            ui->twistButton->setChecked(false);
+            break;
+    }
+}
+
 void ToolsDialog::on_radiusSlider_valueChanged(int value) {
     float radius = getFloatRadiusValue(value);
     controller->toolRadiusChanged(radius);
@@ -37,6 +63,18 @@ void ToolsDialog::on_radiusSlider_valueChanged(int value) {
 
 void ToolsDialog::on_radiusSpinBox_valueChanged(double value) {
     controller->toolRadiusChanged(value);
+}
+
+void ToolsDialog::on_sweepButton_clicked() {
+    controller->sweepSelected();
+}
+
+void ToolsDialog::on_defInfButton_clicked() {
+    controller->infDefSelected();
+}
+
+void ToolsDialog::on_twistButton_clicked() {
+    controller->twistSelected();
 }
 
 float ToolsDialog::getFloatRadiusValue(int value) {

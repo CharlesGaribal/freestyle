@@ -10,19 +10,20 @@ class Operator
 {
 protected:
     typedef QuasiUniformMesh Mesh;
-    typedef std::vector<Mesh::VertexHandle> Field;
     typedef Mesh::VertexHandle Vertex;
+    typedef std::pair<Vertex, float> FieldValue;
+    typedef std::vector<FieldValue> Field;
 
 public:
     enum ETopologicalChange {NONE, GENUS};
 
     Operator() {}
 
-    virtual void applyDeformation(Mesh *mesh, Vertex vcenter, Field &field, float dmove) = 0;
+    virtual void applyDeformation(Mesh *mesh, Vertex vcenter, Field &field, float radius, float dmove) = 0;
     virtual ETopologicalChange getTopologicalChange() = 0;
 };
 
-class InfDefOperator : Operator
+class InfDefOperator : public Operator
 {
 public:
     static const int INFLATE = 1;
@@ -33,7 +34,7 @@ public:
     void setDirection(int _direction);
     void setSmoothParam(int _smoothParam);
 
-    void applyDeformation(Mesh *mesh, Vertex vcenter, Field &field, float dmove);
+    void applyDeformation(Mesh *mesh, Vertex vcenter, Field &field, float radius, float dmove);
     ETopologicalChange getTopologicalChange();
 
 private:
