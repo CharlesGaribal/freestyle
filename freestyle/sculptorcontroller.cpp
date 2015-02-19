@@ -8,31 +8,44 @@ SculptorController::SculptorController(MainWindow *mw) :
     sculptor(),
     mainWindow(mw),
     minToolRadius(0.01f),
-    maxToolRadius(0.2f)
+    maxToolRadius(1.f)
 {
     validSelection = false;
 
-    setIndexOp(INFDEFLATE, sculptor.addOperator(new InfDefOperator()));
-    sculptor.setCurrentOperator(getIndexOp(INFDEFLATE));
+    sculptor.addOperator(new InfDefOperator());
+    sculptor.addOperator(new TwistOperator());
+    sculptor.addOperator(new SweepOperator());
+    sculptor.setCurrentOperator(INFDEFLATE);
 
     sculptor.setRadius(minToolRadius);
     mainWindow->getOGLWidget()->getRenderer()->toolRadiusChanged(minToolRadius);
 }
 
+SculptorParameters SculptorController::getParameters() {
+    return sculptor.getParameters();
+}
+
+void SculptorController::toolDialogHidden() {
+    mainWindow->switchToolsVisibility(false);
+}
+
 void SculptorController::sweepSelected() {
-    //sculptor.setCurrentOperator(getIndexOp(SWEEP));
-    sculptor.setCurrentOperator(-1);
+    sculptor.setCurrentOperator(SWEEP);
     mainWindow->getToolsDialog()->setToolSelected(SWEEP);
 }
 
 void SculptorController::infDefSelected() {
-    sculptor.setCurrentOperator(getIndexOp(SWEEP));
+    sculptor.setCurrentOperator(INFDEFLATE);
     mainWindow->getToolsDialog()->setToolSelected(INFDEFLATE);
 }
 
 void SculptorController::twistSelected() {
-    sculptor.setCurrentOperator(-1);
+    sculptor.setCurrentOperator(TWIST);
     mainWindow->getToolsDialog()->setToolSelected(TWIST);
+}
+
+SculptorController::OperatorType SculptorController::getToolSelected() {
+    return (SculptorController::OperatorType)(static_cast< SculptorController::OperatorType >(sculptor.getCurrentIndexOp()));
 }
 
 void SculptorController::mouseMoveEvent(QMouseEvent *e, int *selectionBuffer, bool found) {
@@ -68,7 +81,7 @@ void SculptorController::mouseWheelEvent(QWheelEvent *e) {
 }
 
 void SculptorController::mousePressEvent(QMouseEvent *e) {
-    if (e->modifiers() & Qt::ControlModifier) {
+    if (e->modifiers() & Qt::ControlModifier && sculptor.getCurrentIndexOp() != NO_OPERATOR) {
         vortex::Timer t;
         t.start();
         sculptor.loop(QuasiUniformMesh::Point(vertexSelected.mVertex.x, vertexSelected.mVertex.y, vertexSelected.mVertex.z));
@@ -94,6 +107,7 @@ void SculptorController::sceneLoaded() {
     vortex::AssetManager *asset = mainWindow->getOGLWidget()->getRenderer()->getScene()->getAsset();
 
     vortex::Mesh *m = asset->getMesh(0);
+
     DefaultPolyMesh pm, pm2;
 
     MeshConverter::convert(m, &pm);
@@ -104,6 +118,8 @@ void SculptorController::sceneLoaded() {
 
     MeshConverter::convert(&pm2, m);
     m->init();
+
+    mainWindow->getParametersDialog()->setParameters(sculptor.getParameters());
 }
 
 void SculptorController::toolRadiusChanged(float value) {

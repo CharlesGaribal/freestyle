@@ -52,11 +52,13 @@ private slots:
     void resetCamera();
     void switchRenderingMode(bool);
 
-    void switchToolsVisibility(bool);
     void openParameters();
 
     void openManual();
     void openAbout();
+
+public slots:
+    void switchToolsVisibility(bool);
 
 private:
     void loadFile(const QString &fileName);
@@ -75,7 +77,6 @@ private:
     QString curFile;
     QString nameFile;
 
-    Sculptor *sculptor;
     QString path;
 };
 

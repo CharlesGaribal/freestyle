@@ -10,11 +10,12 @@ ToolsDialog::ToolsDialog(QWidget *parent, SculptorController *controller) : QDia
     ui->setupUi(this);
 
     ui->radiusSpinBox->blockSignals(true);
-
     ui->radiusSpinBox->setMinimum(controller->getMinToolRadius());
     ui->radiusSpinBox->setMaximum(controller->getMaxToolRadius());
-
     ui->radiusSpinBox->blockSignals(false);
+
+    setToolRadius(controller->getToolRadius());
+    setToolSelected(controller->getToolSelected());
 }
 
 ToolsDialog::~ToolsDialog() {
@@ -32,7 +33,7 @@ void ToolsDialog::setToolRadius(float toolRadius) {
 }
 
 void ToolsDialog::setToolSelected(SculptorController::OperatorType type) {
-    switch (type) {
+   switch (type) {
         case SculptorController::OperatorType::SWEEP:
             ui->defInfButton->setChecked(false);
             ui->sweepButton->setChecked(true);
@@ -75,6 +76,10 @@ void ToolsDialog::on_defInfButton_clicked() {
 
 void ToolsDialog::on_twistButton_clicked() {
     controller->twistSelected();
+}
+
+void ToolsDialog::hideEvent(QHideEvent *event) {
+    controller->toolDialogHidden();
 }
 
 float ToolsDialog::getFloatRadiusValue(int value) {

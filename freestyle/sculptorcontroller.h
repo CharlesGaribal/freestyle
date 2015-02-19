@@ -33,9 +33,14 @@ public:
 
     SculptorController(MainWindow *mw);
 
+    SculptorParameters getParameters();
+
+    void toolDialogHidden();
+
     void sweepSelected();
     void infDefSelected();
     void twistSelected();
+    OperatorType getToolSelected();
 
     void mouseMoveEvent(QMouseEvent *e, int *selectionBuffer, bool found);
     void mouseWheelEvent(QWheelEvent *e);
@@ -55,18 +60,6 @@ private:
     MainWindow *mainWindow;
     vortex::Mesh::VertexData vertexSelected;
     bool validSelection;
-
-    int opsIndexes[N];
-
-    void setIndexOp(OperatorType type, int index) {
-        assert(type != N);
-        opsIndexes[type] = index;
-    }
-
-    int getIndexOp(OperatorType type) {
-        assert(type != N);
-        return opsIndexes[type];
-    }
 
     float minToolRadius, maxToolRadius;
 };

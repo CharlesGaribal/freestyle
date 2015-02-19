@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     sculptorController = new SculptorController(this);
 
     toolsDialog = new ToolsDialog(this, sculptorController);
-    parametersDialog = new ParametersDialog(this);
+    parametersDialog = new ParametersDialog(this, sculptorController);
 
     if (!(QGLFormat::openGLVersionFlags() & QGLFormat::OpenGL_Version_3_2))
         std::cerr << "error context OpenGL" << std::endl;
@@ -202,8 +202,13 @@ void MainWindow::switchRenderingMode(bool on) {
     openGLWidget->switchRenderingMode(!on);
 }
 
-void MainWindow::switchToolsVisibility(bool) {
-    toolsDialog->show();
+void MainWindow::switchToolsVisibility(bool on) {
+    if (on)
+        toolsDialog->show();
+    else
+        toolsDialog->hide();
+
+    ui->actionShowHideTools->setChecked(on);
 }
 
 void MainWindow::openParameters() {
