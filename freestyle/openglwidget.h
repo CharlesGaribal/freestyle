@@ -51,7 +51,7 @@ class CameraController;
 class OpenGLWidget : public QGLWidget {
     Q_OBJECT
 public:
-    OpenGLWidget ( QWidget *parent );
+    OpenGLWidget (MainWindow *mw);
     virtual ~OpenGLWidget();
 
     void clear();
@@ -61,8 +61,8 @@ public:
     vortex::SceneManager *sceneManager(){ return sceneManager_; }
     void switchRenderingMode(bool on);
 
-    Sculptor *getSculptor() {
-        return sculptorController->getSculptor();
+    FtylRenderer *getRenderer() {
+        return renderer_;
     }
 
 protected:
@@ -79,6 +79,8 @@ private slots:
 
 
 private:
+    MainWindow *mainWindow;
+
     FtylRenderer *renderer_;
     vortex::Camera *camera_;
     vortex::SceneManager* sceneManager_;
@@ -88,7 +90,6 @@ private:
     int height_;
 
     vortex::ui::CameraController *cameraController_;
-    SculptorController *sculptorController;
 
     vortex::Timer timerPicking;
     int timeRefreshPicking;

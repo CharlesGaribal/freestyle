@@ -46,13 +46,17 @@ public:
     }
     float readDepthAt(int x, int y);
 
+    void toolRadiusChanged(float radius) {
+        mToolRadius = radius;
+    }
+
     void setVertexSelected(glm::vec3 position) {
-        mIsVertexSelected = true;
+        mValidSelection = true;
         mVertexSelected = position;
     }
 
-    void noVertexSelected() {
-        mIsVertexSelected = false;
+    void noSelection() {
+        mValidSelection = false;
     }
 
     void drawScreenQuad() { mScreenQuad->draw(); }
@@ -109,7 +113,9 @@ private:
 
     // For picking
     glm::vec3 mVertexSelected;
-    bool mIsVertexSelected;
+    bool mValidSelection;
+
+    float mToolRadius;
 public:
 
     int width(){ return mWidth; }

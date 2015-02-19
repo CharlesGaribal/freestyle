@@ -7,6 +7,8 @@ uniform vec3 Ka;
 in vec3 varNormal;
 in vec4 varTexCoord;
 
+in float varDist;
+
 layout(location = 0) out vec4 outColor;
 layout(location = 1) out vec4 outNormal;
 
@@ -23,16 +25,19 @@ uniform sampler2D map_diffuse;
 #endif
 
 vec3 getKa(){
+    vec3 amb;
+
 #ifdef TEXTURE_AMBIENT
-    vec3 amb = texture(map_ambient, varTexCoord.st).rgb;
-    return max(vec3(0.001), 0.005*amb);
+    amb = texture(map_ambient, varTexCoord.st).rgb;
 #else
 #ifdef TEXTURE_DIFFUSE
-    vec3 amb = texture(map_diffuse, varTexCoord.st).rgb;
-    return max(vec3(0.001), 0.005*amb);
+    amb = texture(map_diffuse, varTexCoord.st).rgb;
 #endif
 #endif
-    return  max(vec3(0.001), Ka);
+
+    amb = max(vec3(0.001), Ka);
+
+    return amb;
 }
 
 void main(void)

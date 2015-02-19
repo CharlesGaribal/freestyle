@@ -4,6 +4,8 @@
 
 #include "meshconverter.h"
 
+#include "mainwindow.h"
+
 // vortex
 #include <cameracontroller.h>
 //Qt
@@ -36,15 +38,15 @@ void cerrInfoGL(OpenGLWidget *w) {
     }
 }
 
-OpenGLWidget::OpenGLWidget ( QWidget *parent ) : QGLWidget ( parent ), camera_(NULL) {
+OpenGLWidget::OpenGLWidget (MainWindow *mw ) : QGLWidget ( mw ), camera_(NULL) {
     setFocusPolicy ( Qt::StrongFocus );
     makeCurrent();
     cerrInfoGL(this);
     objectpicker_ = NULL;
+    mainWindow = mw;
     assetManager_ = new AssetManager();
     sceneManager_ = new SceneManager(assetManager_);
     renderer_ = new FtylRenderer(sceneManager_);
-    sculptorController = new SculptorController(renderer_);
     timeRefreshPicking = 0.1;
     timerPicking.start();
     cameraController_ = NULL;
@@ -99,7 +101,7 @@ void OpenGLWidget::paintGL() {
 }
 
 void OpenGLWidget::keyPressEvent ( QKeyEvent * e ) {
-    std::cerr <<"KeyPressEvent"<< std::endl;
+    //std::cerr <<"KeyPressEvent"<< std::endl;
     switch(e->key()) {
     case Qt::Key_R:
         resetCamera();
@@ -148,12 +150,15 @@ void OpenGLWidget::keyPressEvent ( QKeyEvent * e ) {
 
 
 void OpenGLWidget::wheelEvent ( QWheelEvent * e ) {
-    cameraController_->wheelEvent(e);
+    if (!(e->modifiers() & Qt::ControlModifier))
+        cameraController_->wheelEvent(e);
+
+    mainWindow->getSculptorController()->mouseWheelEvent(e);
     updateGL();
 }
 
 void OpenGLWidget::mouseMoveEvent ( QMouseEvent * e ) {
-    if (e->modifiers() & Qt::ControlModifier)
+    if (!(e->modifiers() & Qt::ControlModifier))
         cameraController_->mouseMoveEvent(e);
 
     timerPicking.stop();
@@ -166,9 +171,9 @@ void OpenGLWidget::mouseMoveEvent ( QMouseEvent * e ) {
         glm::mat4x4 modelViewMatrix = camera_->getModelViewMatrix();
         glm::mat4x4 projectionMatrix = camera_->getProjectionMatrix();
         found = select(modelViewMatrix, projectionMatrix, e->pos().x(), height_ - e->pos().y(), selectionBuffer);
-        if (found)
-            std::cerr << "materialId : " << selectionBuffer[0] << " -- meshId : " << selectionBuffer[1] << " -- faceId : " << selectionBuffer[2] << std::endl;
-        sculptorController->mouseMoveEvent(e, selectionBuffer, found);
+        /*if (found)
+            std::cerr << "materialId : " << selectionBuffer[0] << " -- meshId : " << selectionBuffer[1] << " -- faceId : " << selectionBuffer[2] << std::endl;*/
+        mainWindow->getSculptorController()->mouseMoveEvent(e, selectionBuffer, found);
         timerPicking.reset();
     }
     timerPicking.start();
@@ -177,13 +182,13 @@ void OpenGLWidget::mouseMoveEvent ( QMouseEvent * e ) {
 }
 
 void OpenGLWidget::mouseReleaseEvent ( QMouseEvent *e ) {
-    if (e->modifiers() & Qt::ControlModifier)
+    if (!(e->modifiers() & Qt::ControlModifier))
         cameraController_->mouseReleaseEvent(e);
 }
 
 
 void OpenGLWidget::mousePressEvent ( QMouseEvent * e ) {
-    if (e->modifiers() & Qt::ControlModifier)
+    if (!(e->modifiers() & Qt::ControlModifier))
         cameraController_->mousePressEvent(e);
     updateGL();
 }

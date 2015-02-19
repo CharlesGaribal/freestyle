@@ -10,6 +10,8 @@ uniform vec3 Ks; /// specular color
 uniform vec3 Kd; /// diffuse color
 uniform float Ns; /// shininess
 
+uniform float toolRadius;
+
 in vec3 varColor;
 in vec3 varEyeVec;
 in vec3 varNormal;
@@ -50,7 +52,7 @@ vec3 getKd(){
     rho = Kd;
 #endif
 
-    if (varDist < 0.1 && varDist > 0)
+    if (varDist < toolRadius && varDist > 0)
         rho = 1 - rho;
 
     return pow(rho, vec3(2.2));

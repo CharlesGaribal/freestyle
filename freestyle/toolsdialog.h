@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+class SculptorController;
+
 namespace Ui {
 class ToolsDialog;
 }
@@ -14,18 +16,22 @@ class ToolsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ToolsDialog(MainWindow *mw);
+    explicit ToolsDialog(QWidget *parent, SculptorController *controller);
     ~ToolsDialog();
 
+    void setToolRadius(float toolRadius);
+
 protected slots:
-    /*void on_sweepButton_clicked() {
-        parentWidget()->activateWindow();
-    }*/
+    void on_radiusSlider_valueChanged(int value);
+    void on_radiusSpinBox_valueChanged(double value);
 
 private:
+    float getFloatRadiusValue(int value);
+    int getIntRadiusValue(double value);
+
     Ui::ToolsDialog *ui;
 
-    MainWindow *mainWindow;
+    SculptorController *controller;
 };
 
 #endif // TOOLSDIALOG_H

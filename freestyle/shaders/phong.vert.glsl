@@ -15,8 +15,8 @@ uniform vec3 uniLightPosition; /// spot light position
 uniform vec3 uniLightDirection; /// spot light direction
 
 uniform vec4 vertexSelected;
-uniform bool isVertexSelected;
-uniform float radiusField;
+uniform bool validSelection;
+uniform float toolRadius;
 
 in vec3 inPosition;
 in vec3 inNormal;
@@ -41,7 +41,7 @@ void main(void)
 
   varTexCoord = inTexCoord;
 
-  if (isVertexSelected)
+  if (validSelection)
       varDist = dist(inPosition, vertexSelected.xyz);
   else
       varDist = -1;

@@ -8,6 +8,7 @@
 #include "parametersdialog.h"
 #include "toolsdialog.h"
 #include "sculptor.h"
+#include "openglwidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,6 +25,22 @@ public:
 
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+    ToolsDialog* getToolsDialog() {
+        return toolsDialog;
+    }
+
+    ParametersDialog* getParametersDialog() {
+        return parametersDialog;
+    }
+
+    OpenGLWidget* getOGLWidget() {
+        return openGLWidget;
+    }
+
+    SculptorController* getSculptorController() {
+        return sculptorController;
+    }
 
 private slots:
     void newSculpt();
@@ -49,8 +66,10 @@ private:
     Ui::MainWindow *ui;
 
     OpenGLWidget *openGLWidget;
-    ToolsDialog toolsDialog;
-    ParametersDialog parametersDialog;
+
+    SculptorController *sculptorController;
+    ToolsDialog *toolsDialog;
+    ParametersDialog *parametersDialog;
 
     QString curFile;
     QString nameFile;

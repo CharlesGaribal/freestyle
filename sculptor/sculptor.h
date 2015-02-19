@@ -11,7 +11,7 @@ class Sculptor
 public:
     Sculptor();
 
-    void operator()(QuasiUniformMesh::VertexHandle vcenter, float radius);
+    void loop(QuasiUniformMesh::Point vCenterPos);
 
     template<typename OpenMesh_type>
     void setMesh(OpenMesh_type &mesh)
@@ -48,6 +48,9 @@ public:
     template<typename OpenMesh_type>
     inline void getMesh(OpenMesh_type &m){ QuasiUniformMeshConverter::convert(*qum, m); }
 
+    float getRadius() const;
+    void setRadius(float value);
+
 private:
     TopologicalHandler topHandler;
 
@@ -62,10 +65,10 @@ private:
     std::vector<QuasiUniformMesh::VertexHandle> field_vertices;
     std::vector<QuasiUniformMesh::EdgeHandle> field_edges;
     QuasiUniformMesh::VertexHandle vcenter;
-    QuasiUniformMesh::Point vcenter_pos;
+
     float radius;
 
-    void buildField();
+    void buildField(QuasiUniformMesh::Point vCenterPos);
     inline float calcDist(QuasiUniformMesh::Point &p1, QuasiUniformMesh::Point &p2){ return sqrt(pow(p1[0]-p2[0], 2) + pow(p1[1]-p2[1], 2) + pow(p1[2]-p2[2], 2)); }
     void getMinMaxAvgEdgeLength(float &min, float &max, float &avg);
 };

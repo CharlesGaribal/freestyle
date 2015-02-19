@@ -20,7 +20,6 @@ public:
 private:
     Ui::ParametersDialog *ui;
 
-
     MainWindow *mainWindow;
 };
 

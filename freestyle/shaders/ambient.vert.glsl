@@ -8,6 +8,10 @@ uniform	mat4 normalMatrix;
 //};
 //****************************
 
+uniform vec4 vertexSelected;
+uniform bool isVertexSelected;
+uniform float toolRadius;
+
 in vec3 inPosition;
 in vec3 inNormal;
 in vec3 inTangent;
@@ -15,6 +19,8 @@ in vec4 inTexCoord;
 
 out vec3 varNormal;
 out vec4 varTexCoord;
+
+out float varDist;
 
 void main(void)
 {

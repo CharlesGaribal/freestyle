@@ -22,9 +22,7 @@ const char* MainWindow::MANUAL_PATH = "./manual/index.html";
 const char* MainWindow::ABOUT_TEXT = "<center><h1>Freestyle editor</h1></center>\n<center>Charles Garibal - Maxime Robinot - Mathieu Dachy</center>\n<center>Masterpiece 2014/2015</center>\n<center>Version 0.0.1</center>";
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    toolsDialog(this),
-    parametersDialog(this)
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -41,6 +39,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
     openGLWidget = new OpenGLWidget(this);
     openGLWidget->setMouseTracking(true);
+
+    sculptorController = new SculptorController(this);
+
+    toolsDialog = new ToolsDialog(this, sculptorController);
+    parametersDialog = new ParametersDialog(this);
 
     if (!(QGLFormat::openGLVersionFlags() & QGLFormat::OpenGL_Version_3_2))
         std::cerr << "error context OpenGL" << std::endl;
@@ -82,6 +85,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
 MainWindow::~MainWindow() {
     delete openGLWidget;
+    delete toolsDialog;
+    delete parametersDialog;
+    delete sculptorController;
     delete ui;
 }
 
@@ -122,6 +128,8 @@ void MainWindow::loadFile(const QString &fileName) {
         reset();
         setCurrentFile(fileName);
         openGLWidget->updateGL();
+
+        //sculptorController->sceneLoaded();
     } else
         QMessageBox::warning(this, tr(APP_NAME), tr("Cannot read file %1\n%2").arg(fileName).arg(openGLWidget->sceneManager()->getLastErrorString()));
 }
@@ -163,11 +171,11 @@ void MainWindow::switchRenderingMode(bool on) {
 }
 
 void MainWindow::switchToolsVisibility(bool) {
-    toolsDialog.show();
+    toolsDialog->show();
 }
 
 void MainWindow::openParameters() {
-    parametersDialog.show();
+    parametersDialog->show();
 }
 
 void MainWindow::openManual() {

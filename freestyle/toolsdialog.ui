@@ -14,9 +14,6 @@
    <string>Tools</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="5" column="2">
-    <widget class="QSpinBox" name="radiusSpinBox"/>
-   </item>
    <item row="5" column="1">
     <widget class="QSlider" name="radiusSlider">
      <property name="maximum">
@@ -71,6 +68,13 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="5" column="2">
+    <widget class="QDoubleSpinBox" name="radiusSpinBox">
+     <property name="decimals">
+      <number>3</number>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

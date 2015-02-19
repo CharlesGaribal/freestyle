@@ -5,7 +5,11 @@
 #include "sculptor.h"
 #include "picker.h"
 
+#include "toolsdialog.h"
+
 #include <QMouseEvent>
+
+class MainWindow;
 
 class FindSelectedVertex : public vortex::SceneGraph::VisitorOperation {
 public:
@@ -23,21 +27,26 @@ private:
     vortex::Mesh::VertexData vertexSelected;
 };
 
-
 class SculptorController
 {
 public:
-    SculptorController(FtylRenderer *renderer);
 
-    void mouseMoveEvent(QMouseEvent *e, int *selectionBuffer, bool vertexSelected);
+    SculptorController(MainWindow *mw);
 
-    Sculptor *getSculptor() {
-        return &sculptor;
-    }
+    void mouseMoveEvent(QMouseEvent *e, int *selectionBuffer, bool found);
+    void mouseWheelEvent(QWheelEvent *e);
+
+    void toolRadiusChanged(float value);
+    float getToolRadius() const;
+
+    float getMinToolRadius() const;
+    float getMaxToolRadius() const;
 
 private:
     Sculptor sculptor;
-    FtylRenderer *renderer;
+    MainWindow *mainWindow;
+
+    float minToolRadius, maxToolRadius;
 };
 
 #endif // SCULPTORCONTROLLER_H

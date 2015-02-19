@@ -16,8 +16,10 @@ static const char *selectionvertexshader = "#version 410\n\
         in vec3 inTangent;\n\
         in vec4 inTexCoord;\n\
         out vec4 varTexCoord;\n\
+        out float vertexID;\n\
         void main(void)\n\
         {\n\
+          vertexID = gl_VertexID;\n\
           gl_Position = MVP*vec4(inPosition.xyz, 1.0);\n\
           varTexCoord = inTexCoord;\n\
         }\n";
@@ -28,6 +30,7 @@ static const char *selectionfragmentshader = "#version 410\n\
         in vec4 varTexCoord;\n\
         uniform int materialId;\n\
         uniform int meshId;\n\
+        in float vertexID;\n\
         void main(void)\n\
         {\n\
             outIds = ivec4(materialId, meshId, gl_PrimitiveID, 1);\n\
