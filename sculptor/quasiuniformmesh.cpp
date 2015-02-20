@@ -68,7 +68,7 @@ void QuasiUniformMeshConverter::makeUniform(QuasiUniformMesh &mesh, float edgeMi
 void QuasiUniformMeshConverter::makeUniformField(QuasiUniformMesh &mesh, const std::vector<OpenMesh::EdgeHandle> &field, float edgeMin, float edgeMax)
 {
     // Compliance to edgeMin
-    for (int i = 0; i < field.size(); ++i)
+    for (int i = 0; i < (int) field.size(); ++i)
     {
         OpenMesh::EdgeHandle eh = field[i];
 
@@ -90,7 +90,7 @@ void QuasiUniformMeshConverter::makeUniformField(QuasiUniformMesh &mesh, const s
     }
 
     // edgeMax tight mesh
-    for (int i = 0; i < field.size(); ++i)
+    for (int i = 0; i < (int) field.size(); ++i)
     {
         OpenMesh::EdgeHandle eh = field[i];
 

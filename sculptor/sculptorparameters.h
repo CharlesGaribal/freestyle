@@ -8,7 +8,7 @@ private:
     float dMove, dThickness;
 
 public:
-    SculptorParameters() {};
+    SculptorParameters() {}
     SculptorParameters(float minEdgeLength, float maxEdgeLength, float dmove, float dthickness);
 
     float getMinEdgeLength() const;
