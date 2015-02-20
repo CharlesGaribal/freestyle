@@ -82,7 +82,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     addAction(ui->actionManual);
     addAction(ui->actionAbout);
 
-    loadFile("../data/bimba.off");
+    //loadFile("../data/bimba.off");
+    loadFile("../data/1sphere.dae");
 }
 
 MainWindow::~MainWindow() {
@@ -211,7 +212,7 @@ void MainWindow::openParameters() {
 }
 
 void MainWindow::openManual() {
-    QDesktopServices::openUrl(QUrl("manual/index.html"));
+    QDesktopServices::openUrl(QUrl("manual/index.pdf"));
 }
 
 void MainWindow::openAbout() {

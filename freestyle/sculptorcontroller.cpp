@@ -2,6 +2,7 @@
 
 #include "mainwindow.h"
 #include "meshconverter.h"
+#include "operator.h"
 
 SculptorController::SculptorController(MainWindow *mw) :
     sculptor(),
@@ -9,8 +10,29 @@ SculptorController::SculptorController(MainWindow *mw) :
     minToolRadius(0.01f),
     maxToolRadius(0.2f)
 {
+    validSelection = false;
+
+    setIndexOp(INFDEFLATE, sculptor.addOperator(new InfDefOperator()));
+    sculptor.setCurrentOperator(getIndexOp(INFDEFLATE));
+
     sculptor.setRadius(minToolRadius);
     mainWindow->getOGLWidget()->getRenderer()->toolRadiusChanged(minToolRadius);
+}
+
+void SculptorController::sweepSelected() {
+    //sculptor.setCurrentOperator(getIndexOp(SWEEP));
+    sculptor.setCurrentOperator(-1);
+    mainWindow->getToolsDialog()->setToolSelected(SWEEP);
+}
+
+void SculptorController::infDefSelected() {
+    sculptor.setCurrentOperator(getIndexOp(SWEEP));
+    mainWindow->getToolsDialog()->setToolSelected(INFDEFLATE);
+}
+
+void SculptorController::twistSelected() {
+    sculptor.setCurrentOperator(-1);
+    mainWindow->getToolsDialog()->setToolSelected(TWIST);
 }
 
 void SculptorController::mouseMoveEvent(QMouseEvent *e, int *selectionBuffer, bool found) {
@@ -21,13 +43,16 @@ void SculptorController::mouseMoveEvent(QMouseEvent *e, int *selectionBuffer, bo
         vortex::SceneGraph::PreOrderVisitor visitor(renderer->getScene()->sceneGraph(), findSelectedVertex);
         visitor.go();
 
-        vortex::Mesh::VertexData vertexSelected = findSelectedVertex.getVertexSelected();
+        vertexSelected = findSelectedVertex.getVertexSelected();
+        validSelection = true;
 
         //std::cout << "Vertex selected : (" << vertexSelected.mVertex.x << ", " << vertexSelected.mVertex.y << ", " << vertexSelected.mVertex.z << ")" << std::endl;
 
         renderer->setVertexSelected(vertexSelected.mVertex);
-    } else
+    } else {
         renderer->noSelection();
+        validSelection = false;
+    }
 }
 
 void SculptorController::mouseWheelEvent(QWheelEvent *e) {
@@ -42,16 +67,39 @@ void SculptorController::mouseWheelEvent(QWheelEvent *e) {
     }
 }
 
+void SculptorController::mousePressEvent(QMouseEvent *e) {
+    if (e->modifiers() & Qt::ControlModifier) {
+        vortex::Timer t;
+        t.start();
+        sculptor.loop(QuasiUniformMesh::Point(vertexSelected.mVertex.x, vertexSelected.mVertex.y, vertexSelected.mVertex.z));
+
+        vortex::AssetManager *asset = mainWindow->getOGLWidget()->getRenderer()->getScene()->getAsset();
+        vortex::Mesh *m = asset->getMesh(0);
+
+        m->release();
+        QuasiUniformMesh pm;
+        sculptor.getMesh(pm);
+        MeshConverter::convert(&pm, m);
+        m->init();
+        t.stop();
+        std::cout << "Time : " << t.value() << std::endl;
+    }
+}
+
+void SculptorController::mouseReleaseEvent(QMouseEvent *e) {
+
+}
+
 void SculptorController::sceneLoaded() {
     vortex::AssetManager *asset = mainWindow->getOGLWidget()->getRenderer()->getScene()->getAsset();
 
     vortex::Mesh *m = asset->getMesh(0);
-    DefaultPolyMesh pm, pm2;
+    QuasiUniformMesh *pm = new QuasiUniformMesh(), pm2;
 
-    MeshConverter::convert(m, &pm);
+    MeshConverter::convert(m, pm);
     m->release();
 
-    sculptor.setMesh(pm);
+    sculptor.setMesh(*pm);
     sculptor.getMesh(pm2);
 
     MeshConverter::convert(&pm2, m);

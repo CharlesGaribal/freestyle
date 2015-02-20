@@ -10,34 +10,54 @@ class Sculptor
 {
 public:
     Sculptor();
+    ~Sculptor();
 
     void loop(QuasiUniformMesh::Point vCenterPos);
 
-    template<typename OpenMesh_type>
-    void setMesh(OpenMesh_type &mesh)
+    void setMesh(QuasiUniformMesh &mesh)
     {
         field_edges.clear();
         field_vertices.clear();
-
-        qum = new QuasiUniformMesh();
-
-        QuasiUniformMeshConverter::convert(mesh, *qum);
+        qum = &mesh;
 
         float min, max, avg;
         getMinMaxAvgEdgeLength(min, max, avg);
 
         std::cout << "min: " << min << "  max: " << max << "  avg: " << avg << std::endl;
 
-        max = avg;
-        min = max / 2.;
-        params.setMinEdgeLength(min);
-        params.setMaxEdgeLength(max);
-        float dthickness = (max)/sqrt(3.f) + 0.3f;
-        float dmove = (dthickness - ((max)/sqrt(3.f))) / 2.f - 0.1f;
-        params.setDThickness(dthickness);
-        params.setDMove(dmove);
+        // grand edges minoritaires
+        if(avg < min + 0.25f*(max-min))
+        {
+            max = (max-min)/2.f;
+
+            if(max/min < 2)
+                min = max/2.01f;
+        }
+        else if(avg > min + 0.75f*(max-min))  // petit edges minoritaires
+        {
+            min = (max-min)/2.f;
+
+            if(max/min < 2)
+                max = min*2.01f;
+        }
+        else if(avg < min + 0.5f*(max-min))
+        {
+            if(max/min < 2)
+                min = max/2.01f;
+        }
+        else if(avg > min + 0.5f*(max-min))
+        {
+            if(max/min < 2)
+                max = min*2.01f;
+        }
+
+        float dthickness = 0.01 + sqrt(0.01f*0.01f*4.f + (max*max)/3.f);
+        float dmove = sqrt((dthickness*dthickness - (max*max)/3.f)/4.f);
+
+        params = SculptorParameters(min, max, dmove, dthickness);
 
         std::cout << "param min: " << min << "  max: " << max << "  dmove: " << dmove << "  dthickness: " << dthickness << std::endl;
+        std::cout << "param min: " << params.getMinEdgeLength() << "  max: " << params.getMaxEdgeLength() << "  dmove: " << params.getDMove() << "  dthickness: " << params.getDThickness() << std::endl;
 
         if (params.valid())
             QuasiUniformMeshConverter::makeUniform(*qum, params.getMinEdgeLength(), params.getMaxEdgeLength());
@@ -49,10 +69,29 @@ public:
     SculptorParameters getParams() {return this->params;}
     std::vector<QuasiUniformMesh::EdgeHandle> getConnectingEdges() {return this->connecting_edges;}
 
-    template<typename OpenMesh_type>
-    inline void getMesh(OpenMesh_type &m) { QuasiUniformMeshConverter::convert(*qum, m); }
+    inline void getMesh(QuasiUniformMesh &m) { m = *qum; }
 
     inline float calcDist(QuasiUniformMesh::Point &p1, QuasiUniformMesh::Point &p2){ return sqrt(pow(p1[0]-p2[0], 2) + pow(p1[1]-p2[1], 2) + pow(p1[2]-p2[2], 2)); }
+
+    int addOperator(Operator *op) {
+        ops.push_back(op);
+        return ops.size()-1;
+    }
+
+    Operator *getOperator(int index) {
+        assert(index >= 0 && index < ops.size());
+        return ops[index];
+    }
+
+    void setCurrentOperator(int index) {
+        assert(index >= -1 && index < ops.size());
+        currentOp = index;
+    }
+
+    Operator *getCurrentOperator() {
+        return getOperator(currentOp);
+    }
+
 
     float getRadius() const;
     void setRadius(float value);
@@ -62,13 +101,13 @@ private:
 
     SculptorParameters params;
 
-    std::vector<Operator> ops;
+    std::vector<Operator*> ops;
     int currentOp;
 
     QuasiUniformMesh *qum;
 
     // Informations about current deformation
-    std::vector<QuasiUniformMesh::VertexHandle> field_vertices;
+    std::vector<std::pair<QuasiUniformMesh::VertexHandle, float>> field_vertices;
     std::vector<QuasiUniformMesh::EdgeHandle> field_edges;
     std::vector<QuasiUniformMesh::EdgeHandle> connecting_edges;
     QuasiUniformMesh::VertexHandle vcenter;
