@@ -12,9 +12,10 @@ SculptorController::SculptorController(MainWindow *mw) :
 {
     validSelection = false;
 
+    sculptor.addOperator(new SweepOperator());
     sculptor.addOperator(new InfDefOperator());
     sculptor.addOperator(new TwistOperator());
-    sculptor.addOperator(new SweepOperator());
+
     sculptor.setCurrentOperator(INFDEFLATE);
 
     sculptor.setRadius(minToolRadius);
@@ -90,9 +91,9 @@ void SculptorController::mousePressEvent(QMouseEvent *e) {
         vortex::Mesh *m = asset->getMesh(0);
 
         m->release();
-        DefaultPolyMesh pm, pm2;
-        sculptor.getMesh(pm2);
-        MeshConverter::convert(&pm2, m);
+        QuasiUniformMesh pm;
+        sculptor.getMesh(pm);
+        MeshConverter::convert(&pm, m);
         m->init();
         t.stop();
         std::cout << "Time : " << t.value() << std::endl;
@@ -108,12 +109,12 @@ void SculptorController::sceneLoaded() {
 
     vortex::Mesh *m = asset->getMesh(0);
 
-    DefaultPolyMesh pm, pm2;
+    QuasiUniformMesh *pm = new QuasiUniformMesh(), pm2;
 
-    MeshConverter::convert(m, &pm);
+    MeshConverter::convert(m, pm);
     m->release();
 
-    sculptor.setMesh(pm);
+    sculptor.setMesh(*pm);
     sculptor.getMesh(pm2);
 
     MeshConverter::convert(&pm2, m);

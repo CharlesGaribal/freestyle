@@ -6,8 +6,8 @@
 
 class MeshConverter{
 public:
-    static void convert(DefaultPolyMesh *in, vortex::Mesh *out);
-    static void convert(vortex::Mesh *in, DefaultPolyMesh *out);
+    static void convert(QuasiUniformMesh *in, vortex::Mesh *out);
+    static void convert(vortex::Mesh *in, QuasiUniformMesh *out);
 };
 
 

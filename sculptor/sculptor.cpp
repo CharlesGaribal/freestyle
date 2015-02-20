@@ -20,12 +20,9 @@ void Sculptor::loop(QuasiUniformMesh::Point vCenterPos) {
 
         buildField(vCenterPos);
 
-
         Operator *op = getOperator(currentOp);
         qum->update_normals();
         op->applyDeformation(qum, vcenter, field_vertices, radius, params.getDMove());
-
-
         QuasiUniformMeshConverter::makeUniformField(*qum, field_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
 
         switch(op->getTopologicalChange()) {
@@ -41,13 +38,11 @@ void Sculptor::loop(QuasiUniformMesh::Point vCenterPos) {
    }
 }
 
-float Sculptor::getRadius() const
-{
+float Sculptor::getRadius() const {
     return radius;
 }
 
-void Sculptor::setRadius(float value)
-{
+void Sculptor::setRadius(float value) {
     radius = value;
 }
 
@@ -56,6 +51,7 @@ void Sculptor::buildField(QuasiUniformMesh::Point vCenterPos)
     field_vertices.clear();
     field_edges.clear();
     float minDist = FLT_MAX;
+
     for(QuasiUniformMesh::VertexIter v_it = qum->vertices_sbegin(); v_it != qum->vertices_end(); ++v_it)
     {
         float dist = calcDist(qum->point(*v_it), vCenterPos);
@@ -77,7 +73,7 @@ void Sculptor::buildField(QuasiUniformMesh::Point vCenterPos)
         bool v1 = false, v2 = false;
         int i = 0;
 
-        while (i < (int) field_vertices.size() && !v1 && !v2)
+        while (i < (int) field_vertices.size() && !(v1 && v2))
         {
             OpenMesh::VertexHandle vh = field_vertices[i++].first;
 

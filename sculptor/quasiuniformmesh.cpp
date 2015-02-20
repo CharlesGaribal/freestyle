@@ -2,9 +2,6 @@
 
 void QuasiUniformMeshConverter::makeUniform(QuasiUniformMesh &mesh, float edgeMin, float edgeMax)
 {
-    //edgeMin = 0.2f;
-    //edgeMax = 0.5f;
-
     // Compliance to edgeMin
     for (QuasiUniformMesh::EdgeIter e_it = mesh.edges_sbegin(); e_it != mesh.edges_end(); ++e_it)
     {
@@ -63,8 +60,6 @@ void QuasiUniformMeshConverter::makeUniform(QuasiUniformMesh &mesh, float edgeMi
                 mesh.split(fh, new_vh);
             }
         }
-        /// problème : les longueurs ne sont pas les vraies (non scale)
-        //printf("length: %f\n", length);
     }
 
     mesh.garbage_collection();
@@ -73,7 +68,7 @@ void QuasiUniformMeshConverter::makeUniform(QuasiUniformMesh &mesh, float edgeMi
 void QuasiUniformMeshConverter::makeUniformField(QuasiUniformMesh &mesh, const std::vector<OpenMesh::EdgeHandle> &field, float edgeMin, float edgeMax)
 {
     // Compliance to edgeMin
-    for (int i = 0; i < field.size(); ++i)
+    for (int i = 0; i < (int) field.size(); ++i)
     {
         OpenMesh::EdgeHandle eh = field[i];
 
@@ -95,7 +90,7 @@ void QuasiUniformMeshConverter::makeUniformField(QuasiUniformMesh &mesh, const s
     }
 
     // edgeMax tight mesh
-    for (int i = 0; i < field.size(); ++i)
+    for (int i = 0; i < (int) field.size(); ++i)
     {
         OpenMesh::EdgeHandle eh = field[i];
 
@@ -130,12 +125,12 @@ void QuasiUniformMeshConverter::makeUniformField(QuasiUniformMesh &mesh, const s
             }
             else
             {
+                bool a = mesh.status(eh).deleted();
+                bool b = mesh.is_simple_link(eh);
                 QuasiUniformMesh::FaceHandle fh = mesh.remove_edge(eh);
                 mesh.split(fh, new_vh);
             }
         }
-        /// problème : les longueurs ne sont pas les vraies (non scale)
-        //printf("length: %f\n", length);
     }
 
     mesh.garbage_collection();
