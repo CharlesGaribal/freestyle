@@ -26,7 +26,7 @@ void SculptorController::sweepSelected() {
 }
 
 void SculptorController::infDefSelected() {
-    sculptor.setCurrentOperator(getIndexOp(SWEEP));
+    sculptor.setCurrentOperator(getIndexOp(INFDEFLATE));
     mainWindow->getToolsDialog()->setToolSelected(INFDEFLATE);
 }
 
