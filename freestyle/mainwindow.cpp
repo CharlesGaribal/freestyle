@@ -179,7 +179,7 @@ void MainWindow::save()
 void MainWindow::saveAs()
 {
     QString selectedFilter;
-    QString fileName = QFileDialog::getSaveFileName(this, "Choose a file to save into", path, "*.obj;;*.dae", &selectedFilter);
+    QString fileName = QFileDialog::getSaveFileName(this, "Choose a file to save into", path, "*.obj;;*.dae;;*.stl;;*.ply", &selectedFilter);
     selectedFilter.remove(0, 1);
 
     if (!fileName.isEmpty())
