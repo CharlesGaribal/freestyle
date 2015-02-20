@@ -66,6 +66,8 @@ public:
     }
 
     QuasiUniformMesh* getQUM() {return this->qum;}
+    SculptorParameters getParams() {return this->params;}
+    std::vector<QuasiUniformMesh::EdgeHandle> getConnectingEdges() {return this->connecting_edges;}
 
     inline void getMesh(QuasiUniformMesh &m) { m = *qum; }
 
@@ -110,6 +112,7 @@ private:
     // Informations about current deformation
     std::vector<std::pair<QuasiUniformMesh::VertexHandle, float>> field_vertices;
     std::vector<QuasiUniformMesh::EdgeHandle> field_edges;
+    std::vector<QuasiUniformMesh::EdgeHandle> connecting_edges;
     QuasiUniformMesh::VertexHandle vcenter;
 
     float radius;

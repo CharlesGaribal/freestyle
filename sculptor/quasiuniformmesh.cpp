@@ -1,4 +1,5 @@
 #include "quasiuniformmesh.h"
+#include "sculptor.h"
 
 void QuasiUniformMeshConverter::makeUniform(QuasiUniformMesh &mesh, float edgeMin, float edgeMax)
 {
@@ -13,7 +14,6 @@ void QuasiUniformMeshConverter::makeUniform(QuasiUniformMesh &mesh, float edgeMi
             QuasiUniformMesh::Point p1 = mesh.point(vh1);
             QuasiUniformMesh::Point p2 = mesh.point(vh2);
             QuasiUniformMesh::Point new_p = (p1 + p2)/2;
-
             if(mesh.is_collapse_ok(heh))
             {
                 mesh.collapse(heh);
@@ -35,7 +35,6 @@ void QuasiUniformMeshConverter::makeUniform(QuasiUniformMesh &mesh, float edgeMi
             QuasiUniformMesh::Point p2 = mesh.point(vh2);
             QuasiUniformMesh::Point new_p = (p1 + p2)/2;
             QuasiUniformMesh::VertexHandle new_vh = mesh.add_vertex(new_p);
-
             if(mesh.is_boundary(*e_it))
             {
                 QuasiUniformMesh::VertexHandle vh3;
@@ -104,7 +103,6 @@ void QuasiUniformMeshConverter::makeUniformField(QuasiUniformMesh &mesh, const s
             QuasiUniformMesh::Point p2 = mesh.point(vh2);
             QuasiUniformMesh::Point new_p = (p1 + p2)/2;
             QuasiUniformMesh::VertexHandle new_vh = mesh.add_vertex(new_p);
-
             if(mesh.is_boundary(eh))
             {
                 QuasiUniformMesh::VertexHandle vh3;
