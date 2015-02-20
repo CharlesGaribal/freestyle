@@ -18,10 +18,23 @@ public:
     enum ETopologicalChange {NONE, GENUS};
 
     Operator() {}
+    virtual ~Operator() {}
 
     virtual void applyDeformation(Mesh *mesh, Vertex vcenter, Field &field, float radius, float dmove) = 0;
     virtual ETopologicalChange getTopologicalChange() = 0;
 };
+
+class SweepOperator : public Operator
+{
+public:
+    SweepOperator() {}
+
+    void applyDeformation(Mesh *mesh, Vertex vcenter, Field &field, float radius, float dmove) {}
+    ETopologicalChange getTopologicalChange() {
+        return ETopologicalChange::NONE;
+    }
+};
+
 
 class InfDefOperator : public Operator
 {
@@ -40,6 +53,18 @@ public:
 private:
     int direction;
     int smoothParam;
+};
+
+
+class TwistOperator : public Operator
+{
+public:
+    TwistOperator() {}
+
+    void applyDeformation(Mesh *mesh, Vertex vcenter, Field &field, float radius, float dmove) {}
+    ETopologicalChange getTopologicalChange() {
+        return ETopologicalChange::GENUS;
+    }
 };
 
 #endif // OPERATOR_H

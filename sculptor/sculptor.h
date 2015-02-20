@@ -79,19 +79,22 @@ public:
     }
 
     Operator *getOperator(int index) {
-        assert(index >= 0 && index < ops.size());
+        assert(index >= 0 && index < (int) ops.size());
         return ops[index];
     }
 
     void setCurrentOperator(int index) {
-        assert(index >= -1 && index < ops.size());
+        assert(index >= -1 && index < (int) ops.size());
         currentOp = index;
     }
 
-    Operator *getCurrentOperator() {
-        return getOperator(currentOp);
+    int getCurrentIndexOp() {
+        return currentOp;
     }
 
+    SculptorParameters getParameters() {
+        return params;
+    }
 
     float getRadius() const;
     void setRadius(float value);

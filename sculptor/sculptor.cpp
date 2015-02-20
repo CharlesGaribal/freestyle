@@ -7,26 +7,22 @@ Sculptor::Sculptor() :
 {}
 
 Sculptor::~Sculptor() {
-    for (int i = 0; i < ops.size(); i++)
+    for (int i = 0; i < (int) ops.size(); i++)
         delete ops[i];
 }
 
-void Sculptor::loop(QuasiUniformMesh::Point vCenterPos)
-{
-    vortex::Timer t;
-    t.start();
+void Sculptor::loop(QuasiUniformMesh::Point vCenterPos) {
+    if (currentOp != -1) {
+        vortex::Timer t;
+        t.start();
 
-    assert(params.valid());
+        assert(params.valid());
 
-    buildField(vCenterPos);
+        buildField(vCenterPos);
 
-    if(field_vertices.size() > 1)
-    {
-        Operator *op = getCurrentOperator();
+        Operator *op = getOperator(currentOp);
         qum->update_normals();
         op->applyDeformation(qum, vcenter, field_vertices, radius, params.getDMove());
-
-
         QuasiUniformMeshConverter::makeUniformField(*qum, field_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
 
     switch(op->getTopologicalChange()) {
@@ -74,18 +70,16 @@ void Sculptor::loop(QuasiUniformMesh::Point vCenterPos)
             break;
     }
 
-    t.stop();
-    std::cout << "Loop execution : " << t.value() << std::endl;
-}
+        t.stop();
+        std::cout << "Loop execution : " << t.value() << std::endl;
+   }
 }
 
-float Sculptor::getRadius() const
-{
+float Sculptor::getRadius() const {
     return radius;
 }
 
-void Sculptor::setRadius(float value)
-{
+void Sculptor::setRadius(float value) {
     radius = value;
 }
 
@@ -116,7 +110,7 @@ void Sculptor::buildField(QuasiUniformMesh::Point vCenterPos)
         bool v1 = false, v2 = false;
         int i = 0;
 
-        while (i < field_vertices.size() && !(v1 && v2))
+        while (i < (int) field_vertices.size() && !(v1 && v2))
         {
             OpenMesh::VertexHandle vh = field_vertices[i++].first;
 

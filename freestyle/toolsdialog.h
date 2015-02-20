@@ -29,6 +29,9 @@ protected slots:
     void on_defInfButton_clicked();
     void on_twistButton_clicked();
 
+protected:
+    void hideEvent(QHideEvent *event);
+
 private:
     float getFloatRadiusValue(int value);
     int getIntRadiusValue(double value);

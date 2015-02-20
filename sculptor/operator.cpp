@@ -24,7 +24,7 @@ Operator::ETopologicalChange InfDefOperator::getTopologicalChange() {
 void InfDefOperator::applyDeformation(Mesh *mesh, Vertex vcenter, Field &field, float radius, float dmove) {
     int n = smoothParam;
 
-    for (int i = 0; i < field.size(); i++) {
+    for (int i = 0; i < (int) field.size(); i++) {
         Vertex v = field[i].first;
         float x = field[i].second / radius;
         QuasiUniformMesh::Normal normal = mesh->normal(v);
