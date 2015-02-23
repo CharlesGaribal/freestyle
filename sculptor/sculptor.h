@@ -52,6 +52,9 @@ public:
         }
 
         float dthickness = 0.01 + sqrt(0.01f*0.01f*4.f + (max*max)/3.f);
+        if(dthickness > min)
+            dthickness = min;
+
         float dmove = sqrt((dthickness*dthickness - (max*max)/3.f)/4.f);
 
         params = SculptorParameters(min, max, dmove, dthickness);

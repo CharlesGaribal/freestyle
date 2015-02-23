@@ -26,13 +26,7 @@ void TopologicalHandler::handleJoinVertex(OpenMesh::VertexHandle &v1, OpenMesh::
         int nbUsing = 0;
     };
 
-    /*
     //Calcul de la valence du second 1-ring
-    for (QuasiUniformMesh::VertexVertexIter vv_it2 = sculptor->getQUM()->vv_iter(v2); vv_it2.is_valid(); ++vv_it2)
-    {
-        ++valence;
-    }*/
-    // il y a beaucoup plus simple
     valence = sculptor->getQUM()->valence(v2);
 
     VertexSecondRing *vsr = new VertexSecondRing[valence];
