@@ -67,7 +67,7 @@ void QuasiUniformMeshConverter::makeUniform(QuasiUniformMesh &mesh, float edgeMi
 void QuasiUniformMeshConverter::makeUniformField(QuasiUniformMesh &mesh, const std::vector<OpenMesh::EdgeHandle> &field, float edgeMin, float edgeMax)
 {
     // Compliance to edgeMin
-    for (int i = 0; i < (int) field.size(); ++i)
+    for (int i = 0; i < field.size(); ++i)
     {
         OpenMesh::EdgeHandle eh = field[i];
 
@@ -89,11 +89,11 @@ void QuasiUniformMeshConverter::makeUniformField(QuasiUniformMesh &mesh, const s
     }
 
     // edgeMax tight mesh
-    for (int i = 0; i < (int) field.size(); ++i)
+    for (int i = 0; i < field.size(); ++i)
     {
         OpenMesh::EdgeHandle eh = field[i];
 
-        if(mesh.is_valid_handle(eh) && mesh.calc_edge_length(eh) > edgeMax)
+        if(!mesh.status(eh).deleted() && mesh.is_valid_handle(eh) && mesh.calc_edge_length(eh) > edgeMax)
         {
             QuasiUniformMesh::HalfedgeHandle heh0 = mesh.halfedge_handle(eh, 0);
             QuasiUniformMesh::HalfedgeHandle heh1 = mesh.halfedge_handle(eh, 1);
@@ -103,6 +103,7 @@ void QuasiUniformMeshConverter::makeUniformField(QuasiUniformMesh &mesh, const s
             QuasiUniformMesh::Point p2 = mesh.point(vh2);
             QuasiUniformMesh::Point new_p = (p1 + p2)/2;
             QuasiUniformMesh::VertexHandle new_vh = mesh.add_vertex(new_p);
+
             if(mesh.is_boundary(eh))
             {
                 QuasiUniformMesh::VertexHandle vh3;
@@ -123,13 +124,10 @@ void QuasiUniformMeshConverter::makeUniformField(QuasiUniformMesh &mesh, const s
             }
             else
             {
-                bool a = mesh.status(eh).deleted();
-                bool b = mesh.is_simple_link(eh);
                 QuasiUniformMesh::FaceHandle fh = mesh.remove_edge(eh);
                 mesh.split(fh, new_vh);
             }
         }
-
     }
 
     mesh.garbage_collection();

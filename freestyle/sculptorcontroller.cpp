@@ -81,7 +81,8 @@ void SculptorController::mouseMoveEvent(QMouseEvent *e) {
         else
             timerPicking.start();
 
-        /*timerClick.stop();
+        //*
+        timerClick.stop();
         if (existMesh && validSelection && mouseClicked && timerClick.value() > timeRefreshClick) {
             timerClick.restart();
 
@@ -101,7 +102,7 @@ void SculptorController::mouseMoveEvent(QMouseEvent *e) {
             std::cout << "Timer deformation : " << t.value() << std::endl;
         }
         else
-            timerClick.start();*/
+            timerClick.start();//*/
     } else
         renderer->noSelection();
 }
@@ -153,6 +154,7 @@ void SculptorController::mousePressEvent(QMouseEvent *e) {
                 break;
         }
 
+        /*
         timerClick.restart();
 
         vortex::Timer t;
@@ -169,8 +171,9 @@ void SculptorController::mousePressEvent(QMouseEvent *e) {
 
         t.stop();
         std::cout << "Timer deformation : " << t.value() << std::endl;
-
+        //*/
         mouseClicked = true;
+
     }
 }
 
