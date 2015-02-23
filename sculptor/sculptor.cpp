@@ -24,10 +24,13 @@ void Sculptor::loop(QuasiUniformMesh::Point vCenterPos) {
         qum->update_normals();
         op->applyDeformation(qum, vcenter, field_vertices, radius, params.getDMove());
 
+        // ne devrait pas être ici
         //QuasiUniformMeshConverter::makeUniformField(*qum, field_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
 
+        //*
         switch(op->getTopologicalChange()) {
             case Operator::NONE:
+                QuasiUniformMeshConverter::makeUniformField(*qum, field_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
                 break;
             case Operator::GENUS:
                 // Stuff with Topological handler
@@ -41,20 +44,20 @@ void Sculptor::loop(QuasiUniformMesh::Point vCenterPos) {
                     vCourant = field_vertices[i].first;
                     for(QuasiUniformMesh::VertexIter v_it = qum->vertices_sbegin(); v_it != qum->vertices_end(); ++v_it)
                     {
+                        if (*v_it == vCourant) {
+                            continue;
+                        }
+
                         bool sommetAdjacent = false;
                         vParcours = *v_it;
                         for(QuasiUniformMesh::VertexVertexIter vv_it = qum->vv_iter(vCourant); vv_it.is_valid(); ++vv_it)
                         {
                             if (*vv_it == *v_it) {
                                 sommetAdjacent = true;
-                                continue;
+                                continue; //break: inutile de regarder les autres
                             }
                         }
                         if (sommetAdjacent) {
-                            continue;
-                        }
-
-                        if (*v_it == vCourant) {
                             continue;
                         }
 
@@ -68,8 +71,11 @@ void Sculptor::loop(QuasiUniformMesh::Point vCenterPos) {
                         }
                     }
                 }
+                QuasiUniformMeshConverter::makeUniformField(*qum, field_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
+
                 break;
         }
+        //*/
 
         t.stop();
         std::cout << "Timer loop : " << t.value() << std::endl;
