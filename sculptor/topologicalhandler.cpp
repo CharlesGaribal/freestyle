@@ -12,8 +12,8 @@ void TopologicalHandler::handleJoinVertex(OpenMesh::VertexHandle &v1, OpenMesh::
     QuasiUniformMesh::Point v1Courant;
     QuasiUniformMesh::Point v2Courant;
     int valence = 0;
-    float plusProche = 999999999999;
-    float secondPlusProche = 99999999999;
+    float plusProche = FLT_MAX;
+    float secondPlusProche = FLT_MAX;
     int idCpt = 0;
 
     //Sommet courant du second 1-ring
@@ -25,11 +25,15 @@ void TopologicalHandler::handleJoinVertex(OpenMesh::VertexHandle &v1, OpenMesh::
         //Nombre de fois où le sommet est lié à un sommet du premier 1-ring
         int nbUsing = 0;
     };
+
+    /*
     //Calcul de la valence du second 1-ring
     for (QuasiUniformMesh::VertexVertexIter vv_it2 = sculptor->getQUM()->vv_iter(v2); vv_it2.is_valid(); ++vv_it2)
     {
         ++valence;
-    }
+    }*/
+    // il y a beaucoup plus simple
+    valence = sculptor->getQUM()->valence(v2);
 
     VertexSecondRing *vsr = new VertexSecondRing[valence];
 
@@ -85,8 +89,8 @@ void TopologicalHandler::handleJoinVertex(OpenMesh::VertexHandle &v1, OpenMesh::
         {
             sculptor->getConnectingEdges().push_back(*fe_it);
         }
-        plusProche = 999999999999;
-        secondPlusProche = 99999999999;
+        plusProche = FLT_MAX;
+        secondPlusProche = FLT_MAX;
         idCpt = 0;
         valence = 0;
     }
