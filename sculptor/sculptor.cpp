@@ -23,7 +23,8 @@ void Sculptor::loop(QuasiUniformMesh::Point vCenterPos) {
         Operator *op = getOperator(currentOp);
         qum->update_normals();
         op->applyDeformation(qum, vcenter, field_vertices, radius, params.getDMove());
-        QuasiUniformMeshConverter::makeUniformField(*qum, field_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
+
+        //QuasiUniformMeshConverter::makeUniformField(*qum, field_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
 
         switch(op->getTopologicalChange()) {
             case Operator::NONE:
@@ -34,7 +35,7 @@ void Sculptor::loop(QuasiUniformMesh::Point vCenterPos) {
         }
 
         t.stop();
-        std::cout << "Loop execution : " << t.value() << std::endl;
+        std::cout << "Timer loop : " << t.value() << std::endl;
    }
 }
 

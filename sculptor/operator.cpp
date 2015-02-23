@@ -34,3 +34,52 @@ void InfDefOperator::applyDeformation(Mesh *mesh, Vertex vcenter, Field &field, 
         mesh->set_point(v, vNewPos);
     }
 }
+
+TwistOperator::TwistOperator(int _direction, int _smoothParam) :
+    direction(_direction),
+    smoothParam(_smoothParam) {
+
+}
+
+void TwistOperator::setDirection(int _direction) {
+    assert(_direction == CLOCKWISE || _direction == ANTICLOCKWISE);
+    direction = _direction;
+}
+
+void TwistOperator::setSmoothParam(int _smoothParam) {
+    assert(_smoothParam >= 2);
+    smoothParam = _smoothParam;
+}
+
+Operator::ETopologicalChange TwistOperator::getTopologicalChange() {
+    return ETopologicalChange::GENUS;
+}
+
+void TwistOperator::applyDeformation(Mesh *mesh, Vertex vcenter, Field &field, float radius, float dmove) {
+    float a0 = M_PI/180. * 10.;
+    int n = smoothParam;
+
+    for (int i = 0; i < (int) field.size(); i++) {
+        Vertex v = field[i].first;
+        float r = field[i].second / radius;
+        QuasiUniformMesh::Point vP = mesh->point(v);
+        QuasiUniformMesh::Normal N = mesh->normal(v);
+        QuasiUniformMesh::Point vC = mesh->point(vcenter);
+        QuasiUniformMesh::Point vecR(vP[0]-vC[0], vP[1]-vC[1], vP[2]-vC[2]);
+
+        float a = a0 * ((n-1)*pow(r,n) - n*pow(r,n-1) + 1);
+
+        QuasiUniformMesh::Point vecD(0,0,0);
+        N.normalize();
+        float ps = prodScal(vecR,N);
+        QuasiUniformMesh::Point pv = prodVec(N,vecR);
+        float cosA = cos(a);
+        float sinA = sin(a);
+        vecD[0] = (vecR[0] - (ps*N[0])) * (1-cosA) + pv[0]*sinA;
+        vecD[1] = (vecR[1] - (ps*N[1])) * (1-cosA) + pv[1]*sinA;
+        vecD[2] = (vecR[2] - (ps*N[2])) * (1-cosA) + pv[2]*sinA;
+
+        QuasiUniformMesh::Point vNewPos(vP[0] + vecD[0], vP[1] + vecD[1] , vP[2] + vecD[2]);
+        mesh->set_point(v, vNewPos);
+    }
+}

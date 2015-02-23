@@ -42,13 +42,10 @@ OpenGLWidget::OpenGLWidget (MainWindow *mw ) : QGLWidget ( mw ), camera_(NULL) {
     setFocusPolicy ( Qt::StrongFocus );
     makeCurrent();
     cerrInfoGL(this);
-    objectpicker_ = NULL;
     mainWindow = mw;
     assetManager_ = new AssetManager();
     sceneManager_ = new SceneManager(assetManager_);
     renderer_ = new FtylRenderer(sceneManager_);
-    timeRefreshPicking = 0.1;
-    timerPicking.start();
     cameraController_ = NULL;
 }
 
@@ -85,6 +82,7 @@ void OpenGLWidget::resizeGL ( int w, int h ) {
     width_=w;
     height_=h;
     renderer_->setViewport(width_, height_);
+    camera_->setScreenWidthAndHeight(width_, height_);
     glCheckError();
 }
 
@@ -161,22 +159,7 @@ void OpenGLWidget::mouseMoveEvent ( QMouseEvent * e ) {
     if (!(e->modifiers() & Qt::ControlModifier))
         cameraController_->mouseMoveEvent(e);
 
-    timerPicking.stop();
-    if (timerPicking.value() > timeRefreshPicking) {
-        int selectionBuffer[4];
-        int found;
-        camera_->setScreenWidthAndHeight(width_, height_);
-        camera_->computeModelViewMatrix();
-        camera_->computeProjectionMatrix();
-        glm::mat4x4 modelViewMatrix = camera_->getModelViewMatrix();
-        glm::mat4x4 projectionMatrix = camera_->getProjectionMatrix();
-        found = select(modelViewMatrix, projectionMatrix, e->pos().x(), height_ - e->pos().y(), selectionBuffer);
-        /*if (found)
-            std::cerr << "materialId : " << selectionBuffer[0] << " -- meshId : " << selectionBuffer[1] << " -- faceId : " << selectionBuffer[2] << std::endl;*/
-        mainWindow->getSculptorController()->mouseMoveEvent(e, selectionBuffer, found);
-        timerPicking.reset();
-    }
-    timerPicking.start();
+    mainWindow->getSculptorController()->mouseMoveEvent(e);
 
     updateGL();
 }
@@ -245,26 +228,8 @@ bool OpenGLWidget::loadScene(std::string fileName){
         std::cerr << "Extend : " << ext[0] << " " << ext[1] << " " << ext[2] <<  std::endl;
         resetCamera();
 
-        /* For picking */
-        if (objectpicker_)
-                delete objectpicker_;
-        objectpicker_ = new Picker(assetManager_, sceneManager_->sceneGraph(), width_, height_);
-
         // here the rendering loops are constructed, any modification on the scene graph must be done before (such as subdivision ...)
         renderer_->initRessources(assetManager_);
     }
     return ret;
-}
-
-
-/* For picking */
-int OpenGLWidget::select(const glm::mat4x4 &modelViewMatrix, const glm::mat4x4 &projectionMatrix, int i, int j, int *selectionBuffer) {
-    objectpicker_->setPickingViewport(width_, height_);
-
-    int found = objectpicker_->select(modelViewMatrix, projectionMatrix, i, j);
-    selectionBuffer[0] = objectpicker_->selectedmaterial();
-    selectionBuffer[1] = objectpicker_->selectedmesh();
-    selectionBuffer[2] = objectpicker_->selectedface();
-    selectionBuffer[3] = found; // may be replaced by another picking attributes
-    return found;
 }

@@ -59,12 +59,33 @@ private:
 class TwistOperator : public Operator
 {
 public:
-    TwistOperator() {}
+    static const int CLOCKWISE = 1;
+    static const int ANTICLOCKWISE = -1;
 
-    void applyDeformation(Mesh *mesh, Vertex vcenter, Field &field, float radius, float dmove) {}
-    ETopologicalChange getTopologicalChange() {
-        return ETopologicalChange::GENUS;
+
+    TwistOperator(int _direction = CLOCKWISE, int _smoothParam = 2);
+
+    void setDirection(int _direction);
+    void setSmoothParam(int _smoothParam);
+
+    void applyDeformation(Mesh *mesh, Vertex vcenter, Field &field, float radius, float dmove);
+    ETopologicalChange getTopologicalChange();
+
+private:
+    Mesh::Point prodVec(Mesh::Point u, Mesh::Point v) {
+        Mesh::Point r;
+        r[0] = u[1]*v[2] - u[2]*v[1];
+        r[1] = u[2]*v[0] - u[0]*v[2];
+        r[2] = u[0]*v[1] - u[1]*v[0];
+        return r;
     }
+
+    float prodScal(Mesh::Point u, Mesh::Point v) {
+        return u[0]*v[0] + u[1]*v[1] + u[2]*v[2];
+    }
+
+    int direction;
+    int smoothParam;
 };
 
 #endif // OPERATOR_H

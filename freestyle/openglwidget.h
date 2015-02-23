@@ -90,14 +90,6 @@ private:
     int height_;
 
     vortex::ui::CameraController *cameraController_;
-
-    vortex::Timer timerPicking;
-    int timeRefreshPicking;
-
-    /* For picking */
-    vortex::Picker *objectpicker_;
-    int select(const glm::mat4x4 &modelViewMatrix, const glm::mat4x4 &projectionMatrix, int i, int j, int *selectionBuffer);
-
 };
 
 #endif

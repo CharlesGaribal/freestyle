@@ -96,7 +96,7 @@ MainWindow::~MainWindow() {
 
 void MainWindow::newSculpt()
 {
-    loadFile("../data/1sphere.dae");
+    loadFile("../data/bimba.off");
 }
 
 void MainWindow::open()
