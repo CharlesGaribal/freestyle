@@ -28,14 +28,14 @@ public:
         // grand edges minoritaires
         if(avg < min + 0.25f*(max-min))
         {
-            max = (max-min)/2.f;
+            max = min + (max-min)/2.f;
 
             if(max/min < 2)
                 min = max/2.01f;
         }
         else if(avg > min + 0.75f*(max-min))  // petit edges minoritaires
         {
-            min = (max-min)/2.f;
+            min = min + (max-min)/2.f;
 
             if(max/min < 2)
                 max = min*2.01f;
@@ -57,13 +57,12 @@ public:
 
         params = SculptorParameters(min, max, dmove, dthickness);
 
-        std::cout << "param min: " << min << "  max: " << max << "  dmove: " << dmove << "  dthickness: " << dthickness << std::endl;
-        std::cout << "param min: " << params.getMinEdgeLength() << "  max: " << params.getMaxEdgeLength() << "  dmove: " << params.getDMove() << "  dthickness: " << params.getDThickness() << std::endl;
+        std::cout << "eval   min: " << min << "  max: " << max << "  dmove: " << dmove << "  dthickness: " << dthickness << std::endl;
+        std::cout << "params min: " << params.getMinEdgeLength() << "  max: " << params.getMaxEdgeLength() << "  dmove: " << params.getDMove() << "  dthickness: " << params.getDThickness() << std::endl;
 
-        if (params.valid())
-            QuasiUniformMeshConverter::makeUniform(*qum, params.getMinEdgeLength(), params.getMaxEdgeLength());
-        else
-            std::cout << "Erreur: paramètre quasi-uniforme non valide" << std::endl;
+        assert(params.valid());
+
+        QuasiUniformMeshConverter::makeUniform(*qum, params.getMinEdgeLength(), params.getMaxEdgeLength());
     }
 
     QuasiUniformMesh* getQUM() {return this->qum;}
