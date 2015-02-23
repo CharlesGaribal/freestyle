@@ -1,3 +1,4 @@
+#include "sculptorparameters.h"
 #include "topologicalhandler.h"
 #include "sculptor.h"
 
@@ -77,8 +78,13 @@ void TopologicalHandler::handleJoinVertex(OpenMesh::VertexHandle &v1, OpenMesh::
         face_vhandles.push_back(vhandle[1]);
         vsr[idPlusProche].nbUsing++;
         face_vhandles.push_back(vhandle[0]);
-        sculptor->getQUM()->add_face(face_vhandles);
+        QuasiUniformMesh::FaceHandle new_f = sculptor->getQUM()->add_face(face_vhandles);
+        face_vhandles.clear();
 
+        for(QuasiUniformMesh::FaceEdgeIter fe_it = sculptor->getQUM()->fe_iter(new_f); fe_it.is_valid(); ++fe_it)
+        {
+            sculptor->getConnectingEdges().push_back(*fe_it);
+        }
         plusProche = 999999999999;
         secondPlusProche = 99999999999;
         idCpt = 0;

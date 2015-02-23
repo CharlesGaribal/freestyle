@@ -24,6 +24,10 @@ bool assimpexporter::exportScene(std::string filename, std::string ext, SceneMan
         r = exporter.Export(scene, "collada", filename);
     else if(ext == "obj")
         r = exporter.Export(scene, "obj", filename);
+    else if(ext == "stl")
+        r = exporter.Export(scene, "stl", filename);
+    else if(ext == "ply")
+        r = exporter.Export(scene, "ply", filename);
     else
         std::cerr << "Extension non prise en compte: " << ext << std::endl;
 

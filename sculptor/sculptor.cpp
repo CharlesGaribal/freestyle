@@ -26,13 +26,50 @@ void Sculptor::loop(QuasiUniformMesh::Point vCenterPos) {
 
         //QuasiUniformMeshConverter::makeUniformField(*qum, field_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
 
-        switch(op->getTopologicalChange()) {
-            case Operator::NONE:
-                break;
-            case Operator::GENUS:
-                // Stuff with Topological handler
-                break;
-        }
+    switch(op->getTopologicalChange()) {
+        case Operator::NONE:
+            break;
+        case Operator::GENUS:
+            // Stuff with Topological handler
+            QuasiUniformMesh::VertexHandle vCourant;
+            QuasiUniformMesh::VertexHandle vParcours;
+            QuasiUniformMesh::Point p1;
+            QuasiUniformMesh::Point p2;
+
+            for(unsigned int i = 0; i < field_vertices.size(); i++)
+            {
+                vCourant = field_vertices[i].first;
+                for(QuasiUniformMesh::VertexIter v_it = qum->vertices_sbegin(); v_it != qum->vertices_end(); ++v_it)
+                {
+                    bool sommetAdjacent = false;
+                    vParcours = *v_it;
+                    for(QuasiUniformMesh::VertexVertexIter vv_it = qum->vv_iter(vCourant); vv_it.is_valid(); ++vv_it)
+                    {
+                        if (*vv_it == *v_it) {
+                            sommetAdjacent = true;
+                            continue;
+                        }
+                    }
+                    if (sommetAdjacent) {
+                        continue;
+                    }
+
+                    if (*v_it == vCourant) {
+                        continue;
+                    }
+
+                    //Test dthickness
+                    p1 = qum->point(vCourant);
+                    p2 = qum->point(*v_it);
+                    float dthickness = calcDist(p1, p2);
+                    if (dthickness <= params.getDThickness()) {
+                        topHandler.handleJoinVertex(vCourant, vParcours);
+                        QuasiUniformMeshConverter::makeUniformField(*qum, connecting_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
+                    }
+                }
+            }
+            break;
+    }
 
         t.stop();
         std::cout << "Timer loop : " << t.value() << std::endl;

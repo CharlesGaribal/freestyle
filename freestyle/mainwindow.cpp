@@ -20,7 +20,7 @@
 using namespace vortex::util;
 
 const char* MainWindow::APP_NAME = "Freestyle";
-const char* MainWindow::MANUAL_PATH = "./manual/index.html";
+const char* MainWindow::MANUAL_PATH = "./manual/index.pdf";
 const char* MainWindow::ABOUT_TEXT = "<center><h1>Freestyle editor</h1></center>\n<center>Charles Garibal - Maxime Robinot - Mathieu Dachy</center>\n<center>Masterpiece 2014/2015</center>\n<center>Version 0.0.1</center>";
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
@@ -179,7 +179,7 @@ void MainWindow::save()
 void MainWindow::saveAs()
 {
     QString selectedFilter;
-    QString fileName = QFileDialog::getSaveFileName(this, "Choose a file to save into", path, "*.obj;;*.dae", &selectedFilter);
+    QString fileName = QFileDialog::getSaveFileName(this, "Choose a file to save into", path, "*.obj;;*.dae;;*.stl;;*.ply", &selectedFilter);
     selectedFilter.remove(0, 1);
 
     if (!fileName.isEmpty())
@@ -217,7 +217,7 @@ void MainWindow::openParameters() {
 }
 
 void MainWindow::openManual() {
-    QDesktopServices::openUrl(QUrl("manual/index.pdf"));
+    QDesktopServices::openUrl(QUrl(MANUAL_PATH));
 }
 
 void MainWindow::openAbout() {

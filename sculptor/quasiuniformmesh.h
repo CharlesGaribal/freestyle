@@ -18,7 +18,6 @@ struct QuasiUniformMeshTraits : public OpenMesh::DefaultTraits
 };
 
 typedef OpenMesh::TriMesh_ArrayKernelT<QuasiUniformMeshTraits> QuasiUniformMesh;
-
 typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMesh::DefaultTraits> DefaultPolyMesh;
 typedef OpenMesh::TriMesh_ArrayKernelT<OpenMesh::DefaultTraits> DefaultTriMesh;
 
