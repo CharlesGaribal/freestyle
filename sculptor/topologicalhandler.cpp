@@ -26,13 +26,9 @@ void TopologicalHandler::handleJoinVertex(OpenMesh::VertexHandle &v1, OpenMesh::
         int nbUsing = 0;
     };
 
-    /*
+
     //Calcul de la valence du second 1-ring
-    for (QuasiUniformMesh::VertexVertexIter vv_it2 = sculptor->getQUM()->vv_iter(v2); vv_it2.is_valid(); ++vv_it2)
-    {
-        ++valence;
-    }*/
-    // il y a beaucoup plus simple
+
     valence = sculptor->getQUM()->valence(v2);
 
     VertexSecondRing *vsr = new VertexSecondRing[valence];
@@ -44,7 +40,6 @@ void TopologicalHandler::handleJoinVertex(OpenMesh::VertexHandle &v1, OpenMesh::
         float dist;
 
         //Tableau de VertexSecondRing pour stocker les distances des sommets du second 1-ring avec le sommet courant vv_it
-
         //Calcul des deux distances les plus proches du point courant
         for (QuasiUniformMesh::VertexVertexIter vv_it2 = sculptor->getQUM()->vv_iter(v2); vv_it2.is_valid(); ++vv_it2)
         {
@@ -76,12 +71,36 @@ void TopologicalHandler::handleJoinVertex(OpenMesh::VertexHandle &v1, OpenMesh::
                 idSecondPlusProche = i;
             }
         }
+
+
         std::vector<QuasiUniformMesh::VertexHandle> face_vhandles;
-        face_vhandles.push_back(vhandle[2]);
-        vsr[idSecondPlusProche].nbUsing++;
-        face_vhandles.push_back(vhandle[1]);
-        vsr[idPlusProche].nbUsing++;
         face_vhandles.push_back(vhandle[0]);
+        QuasiUniformMesh::VertexHandle vCourant;
+        for(QuasiUniformMesh::VertexOHalfedgeIter voh_it = sculptor->getQUM()->voh_begin(vhandle[1]); sculptor->getQUM()->voh_end(vhandle[1]); ++voh_it)
+        {
+            //Test si le next halfedge pointe vers le sommet du premier 1-ring
+            vCourant = sculptor->getQUM()->to_vertex_handle(sculptor->getQUM()->next_halfedge_handle(voh_it));
+            if (isSameVertexHandle(vCourant, vhandle[1])) {
+                face_vhandles.push_back(vhandle[2]);
+                vsr[idSecondPlusProche].nbUsing++;
+                face_vhandles.push_back(vhandle[1]);
+                vsr[idPlusProche].nbUsing++;
+                break;
+            }
+        }
+
+        for(QuasiUniformMesh::VertexOHalfedgeIter voh_it = sculptor->getQUM()->voh_begin(vhandle[1]); sculptor->getQUM()->voh_end(vhandle[1]); ++voh_it)
+        {
+            //Test si le next halfedge pointe vers le sommet du premier 1-ring
+            vCourant = sculptor->getQUM()->to_vertex_handle(sculptor->getQUM()->next_halfedge_handle(voh_it));
+            if (isSameVertexHandle(vCourant, vhandle[2])) {
+                face_vhandles.push_back(vhandle[1]);
+                vsr[idPlusProche].nbUsing++;
+                face_vhandles.push_back(vhandle[2]);
+                vsr[idSecondPlusProche].nbUsing++;
+                break;
+            }
+        }
         QuasiUniformMesh::FaceHandle new_f = sculptor->getQUM()->add_face(face_vhandles);
         face_vhandles.clear();
 
@@ -231,5 +250,12 @@ bool TopologicalHandler::hasSameVertices(OpenMesh::EdgeHandle &eh1, OpenMesh::Ed
     QuasiUniformMesh::Point p2_2 = mesh->point(mesh->from_vertex_handle(heh2));
 
     return (p1_1[0] == p2_1[0] && p1_1[1] == p2_1[1] && p1_1[2] == p2_1[2] && p1_2[0] == p2_2[0] && p1_2[1] == p2_2[1] && p1_2[2] == p2_2[2]);
+}
+
+bool TopologicalHandler::isSameVertexHandle(OpenMesh::VertexHandle &v1, OpenMesh::VertexHandle &v2)
+{
+    QuasiUniformMesh::Point p1 = sculptor->getQUM()->point(v1);
+    QuasiUniformMesh::Point p2 = sculptor->getQUM()->point(v2);
+    return (p1[0] == p2[0] && p1[1] == p2[1] && p1[2] == p2[2]);
 }
 
