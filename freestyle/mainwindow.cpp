@@ -166,31 +166,74 @@ QString MainWindow::strippedName(const QString &fullFileName) {
 void MainWindow::save()
 {
     vortex::assimpexporter exporter;
-    int i = curFile.lastIndexOf(".");
-    QString extension = curFile;
-    extension.remove(0, i+1);
 
-    if(exporter.exportScene(curFile.toStdString(), extension.toStdString(), openGLWidget->sceneManager()))
-        QMessageBox::warning(this, tr("Sauvegarde"), tr("Save successful !"));
+    int i = curFile.lastIndexOf(".");
+    QString ext = curFile;
+
+    if(i == -1)
+    {
+        curFile.push_back(".obj");
+        ext = ".obj";
+    }
     else
-        QMessageBox::warning(this, tr("Sauvegarde"), tr("Save failed ! %1").arg(curFile));
+    {
+        ext.remove(0, i);
+    }
+
+
+    if(ext != ".obj" && ext != ".dae" && ext != ".stl" && ext != ".ply")
+    {
+        QMessageBox::warning(this, tr("Sauvegarde"), tr("Format non pris en charge: %1\nFormats disponibles: %2")
+                                                    .arg(ext).arg(".obj .dae .stl .ply"));
+    }
+    else
+    {
+        ext.remove(0, 1);
+
+        if(exporter.exportScene(curFile.toStdString(), ext.toStdString(), openGLWidget->sceneManager()))
+            QMessageBox::warning(this, tr("Sauvegarde"), tr("Save successful !"));
+        else
+            QMessageBox::warning(this, tr("Sauvegarde"), tr("Save failed ! %1").arg(curFile));
+    }
 }
 
 void MainWindow::saveAs()
 {
-    QString selectedFilter;
-    QString fileName = QFileDialog::getSaveFileName(this, "Choose a file to save into", path, "*.obj;;*.dae;;*.stl;;*.ply", &selectedFilter);
-    selectedFilter.remove(0, 1);
+    vortex::assimpexporter exporter;
 
-    if (!fileName.isEmpty())
+    QString selectedExtension;
+    QString nameFileSave = QFileDialog::getSaveFileName(this, "Choose a file to save into", path, "*.obj;;*.dae;;*.stl;;*.ply", &selectedExtension);
+    selectedExtension.remove(0, 1);
+
+    if (!nameFileSave.isEmpty())
     {
-        if(!fileName.endsWith(selectedFilter))
-            fileName.insert(fileName.length(), selectedFilter);
+        int i = nameFileSave.lastIndexOf(".");
+        QString ext = nameFileSave;
 
-        QString old_cur_File = curFile;
-        curFile = fileName;
-        save();
-        curFile = old_cur_File;
+        if(i == -1)
+        {
+            nameFileSave.push_back(selectedExtension);
+            ext = selectedExtension;
+        }
+        else
+        {
+            ext.remove(0, i);
+        }
+
+        if(ext != ".obj" && ext != ".dae" && ext != ".stl" && ext != ".ply")
+        {
+            QMessageBox::warning(this, tr("Sauvegarde"), tr("Format non pris en charge: %1\nFormats disponibles: %2")
+                                                        .arg(ext).arg(".obj .dae .stl .ply"));
+        }
+        else
+        {
+            ext.remove(0, 1);
+
+            if(exporter.exportScene(nameFileSave.toStdString(), ext.toStdString(), openGLWidget->sceneManager()))
+                QMessageBox::warning(this, tr("Sauvegarde"), tr("Save successful !"));
+            else
+                QMessageBox::warning(this, tr("Sauvegarde"), tr("Save failed ! %1").arg(nameFileSave));
+        }
     }
 }
 
