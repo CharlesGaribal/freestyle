@@ -13,23 +13,27 @@ Sculptor::~Sculptor() {
 
 void Sculptor::loop(QuasiUniformMesh::Point vCenterPos) {
     if (currentOp != -1) {
-        vortex::Timer t;
+        vortex::Timer t, tswitch, tbuild, top;
         t.start();
 
         assert(params.valid());
 
+        tbuild.start();
         buildField(vCenterPos);
+        tbuild.stop();
+        std::cout << "Timer build : " << tbuild.value() << std::endl;
 
         if(field_vertices.size() > 1)
         {
+            top.start();
             Operator *op = getOperator(currentOp);
             qum->update_normals();
             op->applyDeformation(qum, vcenter, field_vertices, radius, params.getDMove());
-
-            // ne devrait pas être ici
-            //QuasiUniformMeshConverter::makeUniformField(*qum, field_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
+            top.stop();
+            std::cout << "Timer op : " << top.value() << std::endl;
 
             //*
+            tswitch.start();
             switch(op->getTopologicalChange()) {
                 case Operator::NONE:
                     QuasiUniformMeshConverter::makeUniformField(*qum, field_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
@@ -41,6 +45,7 @@ void Sculptor::loop(QuasiUniformMesh::Point vCenterPos) {
                     QuasiUniformMesh::Point p1;
                     QuasiUniformMesh::Point p2;
 
+                    //#pragma omp parallel for
                     for(unsigned int i = 0; i < field_vertices.size(); i++)
                     {
                         vCourant = field_vertices[i].first;
@@ -70,8 +75,8 @@ void Sculptor::loop(QuasiUniformMesh::Point vCenterPos) {
                             p2 = qum->point(*v_it);
                             float dthickness = calcDist(p1, p2);
                             if (dthickness <= params.getDThickness()) {
-                                topHandler.handleJoinVertex(vCourant, vParcours);
-                                QuasiUniformMeshConverter::makeUniformField(*qum, connecting_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
+                                //topHandler.handleJoinVertex(vCourant, vParcours);
+                                //QuasiUniformMeshConverter::makeUniformField(*qum, connecting_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
                             }
                         }
                     }
@@ -79,11 +84,13 @@ void Sculptor::loop(QuasiUniformMesh::Point vCenterPos) {
 
                     break;
             }
+            tswitch.stop();
+            std::cout << "Timer switch : " << tswitch.value() << std::endl;
             //*/
-
-            t.stop();
-            std::cout << "Timer loop : " << t.value() << std::endl;
         }
+
+        t.stop();
+        std::cout << "Timer loop : " << t.value() << std::endl;
    }
 }
 
@@ -104,6 +111,7 @@ void Sculptor::buildField(QuasiUniformMesh::Point vCenterPos)
     for(QuasiUniformMesh::VertexIter v_it = qum->vertices_sbegin(); v_it != qum->vertices_end(); ++v_it)
     {
         float dist = calcDist(qum->point(*v_it), vCenterPos);
+
         if(dist < radius) {
             field_vertices.push_back(std::pair<QuasiUniformMesh::VertexHandle, float>(*v_it, dist));
 

@@ -70,6 +70,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     connect(ui->actionManual, SIGNAL(triggered()), SLOT(openManual()));
     connect(ui->actionAbout, SIGNAL(triggered()), SLOT(openAbout()));
 
+    connect(ui->actionSubdivide, SIGNAL(triggered()), SLOT(subdivide()));
+
     addAction(ui->actionNewSculpt);
     addAction(ui->actionOpen);
     addAction(ui->actionSave);
@@ -81,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     addAction(ui->actionParameters);
     addAction(ui->actionManual);
     addAction(ui->actionAbout);
+    addAction(ui->actionSubdivide);
 
     //loadFile("../data/bimba.off");
     loadFile("../data/1sphere.dae");
@@ -96,7 +99,7 @@ MainWindow::~MainWindow() {
 
 void MainWindow::newSculpt()
 {
-    loadFile("../data/bimba.off");
+    loadFile("../data/1sphere.dae");
 }
 
 void MainWindow::open()
@@ -269,6 +272,11 @@ void MainWindow::openAbout() {
     s += "<center>Masterpiece 2014/2015</center>\n";
     s += "<center>Version 0.0.1</center>";
     QMessageBox::about(this, "Freestyle", s);
+}
+
+void MainWindow::subdivide()
+{
+    sculptorController->subdivide();
 }
 
 void MainWindow::reset(){

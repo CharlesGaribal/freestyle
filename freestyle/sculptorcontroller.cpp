@@ -5,6 +5,7 @@
 #include "mainwindow.h"
 #include "meshconverter.h"
 #include "operator.h"
+#include "subdivider.h"
 
 SculptorController::SculptorController(MainWindow *mw) :
     sculptor(),
@@ -224,6 +225,26 @@ float SculptorController::getMinToolRadius() const {
 
 float SculptorController::getMaxToolRadius() const {
     return maxToolRadius;
+}
+
+void SculptorController::subdivide()
+{
+    QuasiUniformMesh *pm = new QuasiUniformMesh(), pm2;
+    sculptor.getMesh(*pm);
+
+    Subdivider::subdivide(*pm);
+
+    FtylRenderer *renderer = mainWindow->getOGLWidget()->getRenderer();
+    vortex::AssetManager *asset = renderer->getScene()->getAsset();
+    vortex::Mesh *m = asset->getMesh(0);
+
+    m->release();
+
+    sculptor.setMesh(*pm);
+    sculptor.getMesh(pm2);
+
+    MeshConverter::convert(&pm2, m);
+    m->init();
 }
 
 void SculptorController::select(int i, int j) {

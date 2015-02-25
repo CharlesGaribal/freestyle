@@ -4,29 +4,29 @@
 class SculptorParameters
 {
 private:
-    float minEdgeLength, maxEdgeLength;
-    float dMove, dThickness;
+    double minEdgeLength, maxEdgeLength;
+    double dMove, dThickness;
 
 public:
     SculptorParameters() {}
-    SculptorParameters(float minEdgeLength, float maxEdgeLength, float dmove, float dthickness);
+    SculptorParameters(double minEdgeLength, double maxEdgeLength, double dmove, double dthickness);
 
-    float getMinEdgeLength() const;
-    void setMinEdgeLength(float length);
+    double getMinEdgeLength() const;
+    void setMinEdgeLength(double length);
 
-    float getMaxEdgeLength() const;
-    void setMaxEdgeLength(float length);
+    double getMaxEdgeLength() const;
+    void setMaxEdgeLength(double length);
 
-    float getDMove() const;
-    void setDMove(float value);
+    double getDMove() const;
+    void setDMove(double value);
 
-    float getDThickness() const;
-    void setDThickness(float value);
+    double getDThickness() const;
+    void setDThickness(double value);
 
     bool valid();
 
-    static bool validMinMaxEdge(float min, float max);
-    static bool validLemme(float dmove, float dthickness, float ddetail);
+    static bool validMinMaxEdge(double min, double max);
+    static bool validLemme(double dmove, double dthickness, double ddetail);
 };
 
 #endif // SCULPTORPARAMETERS_H

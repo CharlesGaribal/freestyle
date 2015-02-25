@@ -66,6 +66,8 @@ public:
     float getMinToolRadius() const;
     float getMaxToolRadius() const;
 
+    void subdivide();
+
 private:
     Sculptor sculptor;
     MainWindow *mainWindow;

@@ -57,6 +57,8 @@ private slots:
     void openManual();
     void openAbout();
 
+    void subdivide();
+
 public slots:
     void switchToolsVisibility(bool);
 

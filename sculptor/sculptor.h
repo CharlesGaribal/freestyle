@@ -26,54 +26,57 @@ public:
         std::cout << "min: " << min << "  max: " << max << "  avg: " << avg << std::endl;
 
         // grand edges minoritaires
-        if(avg < min + 0.25f*(max-min))
+        if(avg < min + 0.25*(max-min))
         {
-            max = min + (max-min)/2.f;
+            max = min + (max-min)/2.;
 
             if(max/min < 2)
-                min = max/2.01f;
+                min = max/2.01;
         }
-        else if(avg > min + 0.75f*(max-min))  // petit edges minoritaires
+        else if(avg > min + 0.75*(max-min))  // petit edges minoritaires
         {
-            min = min + (max-min)/2.f;
+            min = min + (max-min)/2.;
 
             if(max/min < 2)
-                max = min*2.01f;
+                max = min*2.01;
         }
-        else if(avg < min + 0.5f*(max-min))
+        else if(avg < min + 0.5*(max-min))
         {
             if(max/min < 2)
-                min = max/2.01f;
+                min = max/2.01;
         }
-        else if(avg > min + 0.5f*(max-min))
+        else if(avg > min + 0.5*(max-min))
         {
             if(max/min < 2)
-                max = min*2.01f;
+                max = min*2.01;
         }
 
-        float dthickness = 0.01 + sqrt(0.01f*0.01f*4.f + (max*max)/3.f);
-
-        float dmove = sqrt((dthickness*dthickness - (max*max)/3.f)/4.f);
+        double dmove = min/2.;
+        double dthickness = sqrt(4*dmove*dmove + (max*max)/3.) + 0.001;
 
         params = SculptorParameters(min, max, dmove, dthickness);
 
         std::cout << "eval   min: " << min << "  max: " << max << "  dmove: " << dmove << "  dthickness: " << dthickness << std::endl;
+        std::cout << "eval   4*dmove*dmove: " << 4.*dmove*dmove << "  dthick*dthick - (dmax*dmax)/3: " << dthickness*dthickness - (max*max)/3. << std::endl;
         std::cout << "params min: " << params.getMinEdgeLength() << "  max: " << params.getMaxEdgeLength() << "  dmove: " << params.getDMove() << "  dthickness: " << params.getDThickness() << std::endl;
 
         assert(params.valid());
 
         QuasiUniformMeshConverter::makeUniform(*qum, params.getMinEdgeLength(), params.getMaxEdgeLength());
+        getMinMaxAvgEdgeLength(min, max, avg);
+
+        std::cout << "min: " << min << "  max: " << max << "  avg: " << avg << std::endl;
     }
 
-    QuasiUniformMesh* getQUM() {return this->qum;}
-    SculptorParameters getParams() {return this->params;}
-    std::vector<QuasiUniformMesh::EdgeHandle> getConnectingEdges() {return this->connecting_edges;}
+    inline QuasiUniformMesh* getQUM() {return this->qum;}
+    inline SculptorParameters getParams() {return this->params;}
+    inline std::vector<QuasiUniformMesh::EdgeHandle> getConnectingEdges() {return this->connecting_edges;}
 
     inline void getMesh(QuasiUniformMesh &m) { m = *qum; }
 
     inline float calcDist(QuasiUniformMesh::Point &p1, QuasiUniformMesh::Point &p2){ return sqrt(pow(p1[0]-p2[0], 2) + pow(p1[1]-p2[1], 2) + pow(p1[2]-p2[2], 2)); }
 
-    int addOperator(Operator *op) {
+    inline int addOperator(Operator *op) {
         ops.push_back(op);
         return ops.size()-1;
     }

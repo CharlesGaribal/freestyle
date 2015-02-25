@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-SculptorParameters::SculptorParameters(float minEdgeLength, float maxEdgeLength, float dmove, float dthickness) {
+SculptorParameters::SculptorParameters(double minEdgeLength, double maxEdgeLength, double dmove, double dthickness) {
     if (validMinMaxEdge(minEdgeLength, maxEdgeLength) && validLemme(dmove, dthickness, maxEdgeLength)) {
         this->minEdgeLength = minEdgeLength;
         this->maxEdgeLength = maxEdgeLength;
@@ -17,38 +17,38 @@ SculptorParameters::SculptorParameters(float minEdgeLength, float maxEdgeLength,
     }
 }
 
-float SculptorParameters::getMinEdgeLength() const {
+double SculptorParameters::getMinEdgeLength() const {
     return minEdgeLength;
 }
 
-void SculptorParameters::setMinEdgeLength(float length) {
+void SculptorParameters::setMinEdgeLength(double length) {
     if (validMinMaxEdge(length, maxEdgeLength))
         minEdgeLength = length;
 }
 
-float SculptorParameters::getMaxEdgeLength() const {
+double SculptorParameters::getMaxEdgeLength() const {
     return maxEdgeLength;
 }
 
-void SculptorParameters::setMaxEdgeLength(float length) {
+void SculptorParameters::setMaxEdgeLength(double length) {
     if (validMinMaxEdge(minEdgeLength, length) && validLemme(dMove, dThickness, length))
         maxEdgeLength = length;
 }
 
-float SculptorParameters::getDMove() const {
+double SculptorParameters::getDMove() const {
     return dMove;
 }
 
-void SculptorParameters::setDMove(float value) {
+void SculptorParameters::setDMove(double value) {
     if (validLemme(value, dThickness, maxEdgeLength))
         dMove = value;
 }
 
-float SculptorParameters::getDThickness() const {
+double SculptorParameters::getDThickness() const {
     return dThickness;
 }
 
-void SculptorParameters::setDThickness(float value) {
+void SculptorParameters::setDThickness(double value) {
     if (validLemme(dMove, value, maxEdgeLength))
         dThickness = value;
 }
@@ -57,12 +57,12 @@ bool SculptorParameters::valid() {
     return validMinMaxEdge(minEdgeLength, maxEdgeLength) && validLemme(dMove, dThickness, maxEdgeLength);
 }
 
-bool SculptorParameters::validMinMaxEdge(float min, float max) {
+bool SculptorParameters::validMinMaxEdge(double min, double max) {
     return min > 0 && min <= max/2.;
 }
 
-bool SculptorParameters::validLemme(float dmove, float dthickness, float ddetail) {
+bool SculptorParameters::validLemme(double dmove, double dthickness, double ddetail) {
     //return dmove <= (dthickness - ddetail/sqrt(3)) / 2.;
-    return 4*dmove*dmove <= dthickness*dthickness - (ddetail*ddetail)/3.f;
+    return 4.*dmove*dmove <= dthickness*dthickness - (ddetail*ddetail)/3.;
 }
 
