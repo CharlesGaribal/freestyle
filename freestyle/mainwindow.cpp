@@ -83,7 +83,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     addAction(ui->actionAbout);
 
     //loadFile("../data/bimba.off");
-    loadFile("../data/1sphere.dae");
+    loadFile("../data/sphere_bis.obj");
 }
 
 MainWindow::~MainWindow() {
