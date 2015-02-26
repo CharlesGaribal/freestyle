@@ -58,12 +58,13 @@ Operator::ETopologicalChange TwistOperator::getTopologicalChange() {
 void TwistOperator::applyDeformation(Mesh *mesh, Vertex vcenter, Field &field, float radius, float dmove) {
     float a0 = M_PI/180. * 10.;
     int n = smoothParam;
+    QuasiUniformMesh::Normal N = mesh->normal(vcenter);
 
     for (int i = 0; i < (int) field.size(); i++) {
         Vertex v = field[i].first;
         float r = field[i].second / radius;
         QuasiUniformMesh::Point vP = mesh->point(v);
-        QuasiUniformMesh::Normal N = mesh->normal(v);
+
         QuasiUniformMesh::Point vC = mesh->point(vcenter);
         QuasiUniformMesh::Point vecR(vP[0]-vC[0], vP[1]-vC[1], vP[2]-vC[2]);
 

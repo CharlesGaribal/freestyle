@@ -70,7 +70,7 @@ public:
 
     inline QuasiUniformMesh* getQUM() {return this->qum;}
     inline SculptorParameters getParams() {return this->params;}
-    inline std::vector<QuasiUniformMesh::EdgeHandle> getConnectingEdges() {return this->connecting_edges;}
+    inline void addToConnectingEdges(QuasiUniformMesh::EdgeHandle eh) { connecting_edges.push_back(eh); }
 
     inline void getMesh(QuasiUniformMesh &m) { m = *qum; }
 

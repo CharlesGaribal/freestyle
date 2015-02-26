@@ -120,8 +120,36 @@ void FtylRenderer::renderFilled(const glm::mat4x4 &modelViewMatrix, const glm::m
     glAssert(glBlendFunc(GL_ONE, GL_ONE));
     glDepthMask(GL_FALSE);
 
+    glAssert(glEnable(GL_POLYGON_OFFSET_FILL));
+
     // render for each light
     lightsPass(mMainDrawLoop, modelViewMatrix, projectionMatrix, viewToWorldMatrix);
+
+    glAssert(glDisable(GL_POLYGON_OFFSET_FILL));
+
+    glEnable(GL_POLYGON_OFFSET_LINE);
+    glPolygonOffset(-1,-1);
+
+    glAssert(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+    glAssert(glEnable(GL_LINE_SMOOTH));
+    glAssert(glLineWidth(1.f) );
+
+    glAssert(glDrawBuffers(1, bufs));
+    glAssert(glDepthFunc(GL_LEQUAL));
+    glAssert(glEnable(GL_BLEND));
+    glAssert(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+    glAssert(glDepthMask(GL_FALSE));
+
+    ShadersGlobalParameters ambientAndNormalParamameters;
+    ambientAndNormalParamameters.addParameter("color", glm::vec4(0.7,0.7,1.0,1));
+    mAmbientAndNormalLoop.draw(ambientAndNormalParamameters, modelViewMatrix, projectionMatrix);
+
+    glAssert( glDisable(GL_BLEND) );
+    glAssert( glDepthFunc(GL_LESS) );
+    glAssert( glDepthMask(GL_TRUE) );
+    glDisable(GL_POLYGON_OFFSET_LINE);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     // restore parameter
     glAssert( glDisable(GL_BLEND) );

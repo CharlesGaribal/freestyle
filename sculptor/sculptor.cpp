@@ -49,51 +49,55 @@ void Sculptor::loop(QuasiUniformMesh::Point vCenterPos) {
                     for(unsigned int i = 0; i < field_vertices.size(); i++)
                     {
                         vCourant = field_vertices[i].first;
-                        //Parcours de tous les sommets du maillage
-                        for(QuasiUniformMesh::VertexIter v_it = qum->vertices_sbegin(); v_it != qum->vertices_end(); ++v_it)
+                        if(!qum->status(vCourant).deleted())
                         {
-                            if (*v_it == vCourant) {
-                                break;
-                            }
-
-                            bool sommetAdjacent = false;
-                            vParcours = *v_it;
-
-                            //Parcours du premier anneau de vCourant
-                            for(QuasiUniformMesh::VertexVertexIter vv_it = qum->vv_iter(vCourant); vv_it.is_valid(); ++vv_it)
+                            //Parcours de tous les sommets du maillage
+                            for(QuasiUniformMesh::VertexIter v_it = qum->vertices_sbegin(); v_it != qum->vertices_end(); ++v_it)
                             {
-                                //Si le sommet courant du premier anneau est identique au sommet en cours de parcours
-                                if (*vv_it == vParcours) {
-                                    sommetAdjacent = true;
+                                if (*v_it == vCourant) {
                                     break;
                                 }
-                                //Parcours du premier anneau du sommet courant du premier anneau de vCourant
-                                for(QuasiUniformMesh::VertexVertexIter vv_it2 = qum->vv_iter(*vv_it); vv_it2.is_valid(); ++vv_it2)
+
+                                bool sommetAdjacent = false;
+                                vParcours = *v_it;
+
+                                //Parcours du premier anneau de vCourant
+                                for(QuasiUniformMesh::VertexVertexIter vv_it = qum->vv_iter(vCourant); vv_it.is_valid(); ++vv_it)
                                 {
-                                    //Si le sommet courant est le même
-                                    if (*vv_it2 == vParcours) {
+                                    //Si le sommet courant du premier anneau est identique au sommet en cours de parcours
+                                    if (*vv_it == vParcours) {
                                         sommetAdjacent = true;
                                         break;
                                     }
+                                    //Parcours du premier anneau du sommet courant du premier anneau de vCourant
+                                    for(QuasiUniformMesh::VertexVertexIter vv_it2 = qum->vv_iter(vParcours); vv_it2.is_valid(); ++vv_it2)
+                                    {
+                                        //Si le sommet courant est le même
+                                        if (*vv_it2 == *vv_it) {
+                                            sommetAdjacent = true;
+                                            break;
+                                        }
+                                    }
+                                    if (sommetAdjacent) {
+                                        break;
+                                    }
                                 }
+
+                                //Si le sommet est adjacent au sommet courant
                                 if (sommetAdjacent) {
                                     break;
                                 }
-                            }
 
-                            //Si le sommet est adjacent au sommet courant
-                            if (sommetAdjacent) {
-                                break;
-                            }
-
-                            //Test dthickness
-                            p1 = qum->point(vCourant);
-                            p2 = qum->point(*v_it);
-                            float dthickness = calcDist(p1, p2);
-                            if (dthickness <= params.getDThickness()) {
-                                std::cout << "Appel de HandleJoinVertex" << std::endl;
-                                topHandler.handleJoinVertex(vCourant, vParcours);
-                                QuasiUniformMeshConverter::makeUniformField(*qum, connecting_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
+                                //Test dthickness
+                                p1 = qum->point(vCourant);
+                                p2 = qum->point(vParcours);
+                                float dthickness = calcDist(p1, p2);
+                                if (dthickness <= params.getDThickness()) {
+                                    std::cout << "Appel de HandleJoinVertex" << std::endl;
+                                    topHandler.handleJoinVertex(vCourant, vParcours);
+                                    QuasiUniformMeshConverter::makeUniformField(*qum, connecting_edges, params.getMinEdgeLength(), params.getMaxEdgeLength());
+                                    break;
+                                }
                             }
                         }
                     }
@@ -101,6 +105,7 @@ void Sculptor::loop(QuasiUniformMesh::Point vCenterPos) {
 
                     break;
             }
+            qum->garbage_collection();
             tswitch.stop();
             std::cout << "Timer switch : " << tswitch.value() << std::endl;
             //*/

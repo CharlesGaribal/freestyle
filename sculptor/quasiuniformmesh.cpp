@@ -130,5 +130,5 @@ void QuasiUniformMeshConverter::makeUniformField(QuasiUniformMesh &mesh, const s
         }
     }
 
-    mesh.garbage_collection();
+    //mesh.garbage_collection();
 }

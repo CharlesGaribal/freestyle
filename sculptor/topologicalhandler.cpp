@@ -9,14 +9,11 @@ TopologicalHandler::TopologicalHandler(Sculptor *sculptor) :
 
 void TopologicalHandler::handleJoinVertex(OpenMesh::VertexHandle &v1, OpenMesh::VertexHandle &v2)
 {
-    QuasiUniformMesh::Point v1Courant;
-    QuasiUniformMesh::Point v2Courant;
-    int valence = 0;
-    float plusProche = FLT_MAX;
-    int idCpt = 0;
-
     std::vector<QuasiUniformMesh::VertexHandle> verticesARing;
     std::vector<QuasiUniformMesh::VertexHandle> verticesBRing;
+
+    std::vector<QuasiUniformMesh::EdgeHandle> edgesARing;
+    std::vector<QuasiUniformMesh::EdgeHandle> edgesBRing;
 
     //Stockage des sommets des deux anneaux à fusionner
     for (QuasiUniformMesh::VertexVertexIter vv_it = sculptor->getQUM()->vv_iter(v1); vv_it.is_valid(); ++vv_it)
@@ -29,8 +26,92 @@ void TopologicalHandler::handleJoinVertex(OpenMesh::VertexHandle &v1, OpenMesh::
         verticesBRing.push_back(*vv_it);
     }
 
+    for (QuasiUniformMesh::VertexEdgeIter vv_it = sculptor->getQUM()->ve_iter(v1); vv_it.is_valid(); ++vv_it)
+    {
+        edgesARing.push_back(*vv_it);
+    }
+
+    for (QuasiUniformMesh::VertexEdgeIter vv_it = sculptor->getQUM()->ve_iter(v2); vv_it.is_valid(); ++vv_it)
+    {
+        edgesBRing.push_back(*vv_it);
+    }
+
+    int valenceA = sculptor->getQUM()->valence(v1), valenceB = sculptor->getQUM()->valence(v2);
+
+    // Flip until valences are equals
+    if(valenceA > valenceB)
+    {
+        int diff = valenceA - valenceB;
+        int nbFlip = 0;
+        bool unSurDeux = true;
+
+        for(int i = 0; i < edgesARing.size(); ++i)
+        {
+            if(unSurDeux)
+            {
+                sculptor->getQUM()->flip(edgesARing[i]);
+
+                nbFlip++;
+
+                if(nbFlip == diff)
+                    break;
+            }
+
+            unSurDeux = !unSurDeux;
+        }
+    }
+    else if(valenceB > valenceA)
+    {
+        int diff = valenceB - valenceA;
+        int nbFlip = 0;
+        bool unSurDeux = true;
+
+        for(int i = 0; i < edgesBRing.size(); ++i)
+        {
+            if(unSurDeux)
+            {
+                sculptor->getQUM()->flip(edgesBRing[i]);
+
+                nbFlip++;
+
+                if(nbFlip == diff)
+                    break;
+            }
+
+            unSurDeux = !unSurDeux;
+        }
+    }
+
+    valenceA = sculptor->getQUM()->valence(v1);
+    valenceB = sculptor->getQUM()->valence(v2);
+
+    edgesARing.clear();
+    edgesBRing.clear();
+
+    for (QuasiUniformMesh::VertexEdgeIter vv_it = sculptor->getQUM()->ve_iter(v1); vv_it.is_valid(); ++vv_it)
+    {
+        edgesARing.push_back(*vv_it);
+    }
+
+    for (QuasiUniformMesh::VertexEdgeIter vv_it = sculptor->getQUM()->ve_iter(v2); vv_it.is_valid(); ++vv_it)
+    {
+        edgesBRing.push_back(*vv_it);
+    }
+
+    verticesARing.clear();
+    verticesBRing.clear();
+
+    for (QuasiUniformMesh::VertexVertexIter vv_it = sculptor->getQUM()->vv_iter(v1); vv_it.is_valid(); ++vv_it)
+    {
+        verticesARing.push_back(*vv_it);
+    }
+
+    for (QuasiUniformMesh::VertexVertexIter vv_it = sculptor->getQUM()->vv_iter(v2); vv_it.is_valid(); ++vv_it)
+    {
+        verticesBRing.push_back(*vv_it);
+    }
+
     //Destruction des faces inutiles pour la fusion
-    QuasiUniformMesh::VertexFaceIter vf_it = sculptor->getQUM()->vf_iter(v1);
     std::vector<QuasiUniformMesh::FaceHandle> v;
 
     for (QuasiUniformMesh::VertexFaceIter vf_it = sculptor->getQUM()->vf_iter(v1); vf_it.is_valid(); ++vf_it) {
@@ -40,6 +121,7 @@ void TopologicalHandler::handleJoinVertex(OpenMesh::VertexHandle &v1, OpenMesh::
     for (int i = 0; i < v.size();i++) {
         sculptor->getQUM()->delete_face(v[i], false);
     }
+
     v.clear();
 
     for (QuasiUniformMesh::VertexFaceIter vf_it = sculptor->getQUM()->vf_iter(v2); vf_it.is_valid(); ++vf_it) {
@@ -52,85 +134,43 @@ void TopologicalHandler::handleJoinVertex(OpenMesh::VertexHandle &v1, OpenMesh::
 
     v.clear();
 
-    sculptor->getQUM()->garbage_collection();
-    //Pour chaque sommet du premier 1-Ring déterminé le point le plus proche et utilisable nbUsing < 2
-    //Calcul de la valence du second 1-ring
-    valence = verticesBRing.size();
-
-    std::vector<VertexSecondRing> vsr;
-    for(int i = 0; i < valence ; i++)
-    {
-        vsr.push_back(VertexSecondRing());
-    }
-    //Parcours des sommets du premier anneau
-    for(int i = 0; i < verticesARing.size(); i++)
-    {
-        v1Courant = sculptor->getQUM()->point(verticesARing[i]);
-        float dist;
-
-        //Parcours des sommets du second anneau pour déterminer lequel est le plus proche et utilisable
-        for (int j = 0; j < verticesBRing.size(); ++j) {
-            v2Courant = sculptor->getQUM()->point(verticesBRing[j]);
-            dist = sculptor->calcDist(v1Courant, v2Courant);
-            vsr[idCpt].dist = dist;
-            vsr[idCpt].v = verticesBRing[j];
-            idCpt++;
-        }
-
-        //Calcul du min
-        QuasiUniformMesh::VertexHandle vhandle[3];
-        vhandle[0] = verticesARing[i];
-        int idPlusProche;
-        for (int i = 0; i < valence; ++i) {
-            if (vsr[i].dist < plusProche && vsr[i].nbUsing < 2) {
-                plusProche = vsr[i].dist;
-                vhandle[1] = vsr[i].v;
-                idPlusProche = i;
-            }
-        }
-
-        std::vector<QuasiUniformMesh::VertexHandle> face_vhandles;
-        face_vhandles.clear();
-        face_vhandles.push_back(vhandle[0]);
-        vhandle[1] = vsr[idPlusProche].v;
-        vsr[idPlusProche].nbUsing++;
-
-        //Déterminer quel point utiliser comme 3ème point de la face
-        QuasiUniformMesh::VertexHandle vNext;
-        //Test si le sommet est dans la liste des sommets adjacents
-        bool bonSommet = false;
-
-        for(QuasiUniformMesh::VertexOHalfedgeIter voh_it = sculptor->getQUM()->voh_iter(vhandle[1]); voh_it.is_valid(); ++voh_it)
-        {
-            vNext = sculptor->getQUM()->to_vertex_handle(*voh_it);
-            for(int x = 0; x < valence ; x++)
-            {
-                if (isSameVertexHandle(vsr[x].v, vNext) && vsr[x].nbUsing < 2) {
-                    bonSommet = true;
-                    vhandle[2] = vNext;
-                    vsr[x].nbUsing++;
-                    break;
-                }
-            }
-            if (bonSommet) {
-                break;
-            }
-        }
-        face_vhandles.push_back(vhandle[1]);
-        face_vhandles.push_back(vhandle[2]);
-
-        QuasiUniformMesh::FaceHandle new_f = sculptor->getQUM()->add_face(face_vhandles);
-
-        for(QuasiUniformMesh::FaceEdgeIter fe_it = sculptor->getQUM()->fe_iter(new_f); fe_it.is_valid(); ++fe_it)
-        {
-            sculptor->getConnectingEdges().push_back(*fe_it);
-        }
-        plusProche = FLT_MAX;
-        idCpt = 0;
-    }
     sculptor->getQUM()->delete_vertex(v1, false);
     sculptor->getQUM()->delete_vertex(v2, false);
-    sculptor->getQUM()->garbage_collection();
+
+    std::reverse(verticesBRing.begin(), verticesBRing.end());
+
+    QuasiUniformMesh::Point a0 = sculptor->getQUM()->point(verticesARing[0]);
+    int k = 0, i = 0, j = 0;
+    float minDist = FLT_MAX;
+
+    for(int i = 0; i < verticesBRing.size(); ++i)
+    {
+        float dist = sculptor->calcDist(a0, sculptor->getQUM()->point(verticesBRing[i]));
+
+        if(dist < minDist)
+        {
+            minDist = dist;
+            j = i;
+        }
+    }
+
+    while(k < valenceA)
+    {
+        sculptor->getQUM()->add_face(verticesARing[i], verticesBRing[j], verticesBRing[(j+1)%valenceB]);
+
+        sculptor->addToConnectingEdges(sculptor->getQUM()->edge_handle(sculptor->getQUM()->find_halfedge(verticesARing[i], verticesBRing[j])));
+        sculptor->addToConnectingEdges(sculptor->getQUM()->edge_handle(sculptor->getQUM()->find_halfedge(verticesBRing[(j+1)%valenceB], verticesARing[i])));
+
+        sculptor->getQUM()->add_face(verticesARing[i], verticesBRing[(j+1)%valenceB], verticesARing[(i+1)%valenceA]);
+
+        sculptor->addToConnectingEdges(sculptor->getQUM()->edge_handle(sculptor->getQUM()->find_halfedge(verticesARing[i], verticesBRing[(j+1)%valenceB])));
+        sculptor->addToConnectingEdges(sculptor->getQUM()->edge_handle(sculptor->getQUM()->find_halfedge(verticesBRing[(j+1)%valenceB], verticesARing[(i+1)%valenceA])));
+
+        i = (i+1)%valenceA;
+        j = (j+1)%valenceB;
+
+        k++;
+    }
 }
 
 void TopologicalHandler::cleanup(OpenMesh::VertexHandle &v1)

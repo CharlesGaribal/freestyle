@@ -46,7 +46,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="minEdgeLabel">
         <property name="text">
-         <string>Minimum edge length ::</string>
+         <string>Minimum edge length :</string>
         </property>
        </widget>
       </item>

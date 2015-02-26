@@ -86,7 +86,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     addAction(ui->actionSubdivide);
 
     //loadFile("../data/bimba.off");
-    loadFile("../data/sphere_bis.obj");
+    //loadFile("../data/sphere_bis.obj");
 }
 
 MainWindow::~MainWindow() {

@@ -10,7 +10,7 @@
 SculptorController::SculptorController(MainWindow *mw) :
     sculptor(),
     mainWindow(mw),
-    minToolRadius(0.01f),
+    minToolRadius(0.25f),
     maxToolRadius(1.f)
 {
     validSelection = false;
@@ -29,7 +29,7 @@ SculptorController::SculptorController(MainWindow *mw) :
     objectpicker = NULL;
 
     mouseClicked = false;
-    timeRefreshClick = 1./10.; // 5 fps
+    timeRefreshClick = 1./50.; // 5 fps
     timerClick.start();
 }
 
